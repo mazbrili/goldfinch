@@ -1,3 +1,24 @@
+/***************************************************************************
+ *      Project created by QtCreator 2018-06-01T17:15:24                   *
+ *                                                                         *
+ *    goldfinch Copyright (C) 2014 AbouZakaria <yahiaui@gmail.com>         *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #ifndef DATABASE_H
 #define DATABASE_H
 #include "defines.h"
@@ -9,7 +30,7 @@
 
 #define DATA_NOEXIST    0
 #define DATA_EXIST      1
-#define DATA_NIDUPDATE  2
+#define DATA_NEEDUPDATE  2
 
 class DataBase : public QObject
 {
@@ -33,9 +54,15 @@ public:
                                            QString pPname,int pPcolm);
 
 
+   static QString duration( const QString &path);
+   static void setDuration(const QString &duration, const QString &path);
+
+   static  QList<QVariantMap> searchAudios(int col ,const QString &text);
 signals:
 
 public slots:
+
+    static  bool fileExist(const QString &path);
     //! حذف كل البيانات
     static  bool clearDatabase();
 
@@ -44,7 +71,7 @@ public slots:
                             const QString &album,const QString &genre,
                             const QString &path, const QString &duration);
     //! حذف مسار من البيانلت
-    static void removeSong(const QString &path);
+    static bool removeSong(const QString &path);
 
 
     //    void updateExistingSong(const QString &title, const QString &artist,
@@ -70,9 +97,7 @@ private:
 
 private slots:
     //! النحقق من البيانات
-    static int  checkSongInfo(const QString &title,const QString &artist,
-                              const QString &album,const QString &genre,
-                              const QString &path, const QString &duration);
+    static int  checkSongInfo(const QString &path);
 
     //! تحديث بيانات
     static  bool updateSong(const QString &title,const QString &artist,

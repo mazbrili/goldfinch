@@ -1,71 +1,77 @@
+/***************************************************************************
+ *      Project created by QtCreator 2018-06-01T17:15:24                   *
+ *                                                                         *
+ *    goldfinch Copyright (C) 2014 AbouZakaria <yahiaui@gmail.com>         *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "treeviewaudio.h"
+#include "propertiesfile.h"
+#include "database.h"
 #include <QHeaderView>
 #include <QResizeEvent>
-#include <QDebug>
+//#include <QDebug>
 #include <QMenu>
-
+#include <QProcess>
+#include <QSettings>
 TreeViewAudio::TreeViewAudio()
 {
-setRootIsDecorated(false);
-setFrameShape(QFrame::NoFrame);
- setColumnWidth(1,16);
-//header()->setDefaultSectionSize(100);
-//header()->setMaximumSectionSize(100);
-header()->setMinimumSectionSize(24);
-     setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-
-header()->setStretchLastSection(false);
-//setColumnWidth(0,200);
-//setColumnWidth(0,1);
-//setColumnWidth(2,50);
-//setColumnWidth(3,50);
-//setColumnWidth(4,50);
-header()->setCascadingSectionResizes(true);
-//header()->setSectionResizeMode(0,QHeaderView::Stretch);
-//header()->setSectionResizeMode(1,QHeaderView::Fixed);
-//header()->setSectionResizeMode(2,QHeaderView::Fixed);
-//header()->setSectionResizeMode(3,QHeaderView::Fixed);
-//setMinimumWidth(250);
-
-//setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-setHeaderHidden(true);
-setEditTriggers(QAbstractItemView::NoEditTriggers);
-
- connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(customContextMenu(QPoint)));
- setContextMenuPolicy(Qt::CustomContextMenu);
+    setRootIsDecorated(false);
+    setFrameShape(QFrame::NoFrame);
+    setColumnWidth(1,16);
+    header()->setMinimumSectionSize(24);
+    setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+    header()->setStretchLastSection(false);
+    header()->setCascadingSectionResizes(true);
+    setHeaderHidden(true);
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
+    connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(customContextMenu(QPoint)));
+    setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 void TreeViewAudio::resizeEvent(QResizeEvent *event)
 {
     header()->setSectionResizeMode(2,QHeaderView::Stretch);
-  setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-   header()->resizeSection(2,event->size().width());
-
-//   qDebug()<<   event->oldSize()<<event->size()<<width();;
-//    header()->setSectionResizeMode(2,QHeaderView::Stretch);
-//   emit treewidthChanged(size().width());
-
+    setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+    header()->resizeSection(2,event->size().width());
 }
 
 void TreeViewAudio::customContextMenu(QPoint )
 {
 
- QModelIndex idx=   selectionModel()->currentIndex();
- if(!idx.isValid()) return;
+    QModelIndex idx=   selectionModel()->currentIndex();
+    if(!idx.isValid()) return;
 
- QMenu mnu;
- QAction *act=mnu.addAction(tr("Add to playlist"),this,SLOT(addCurentToPLaylist()));
- act=mnu.addAction(tr("Favorite / Unfavorite"),this,SLOT(favoriteCurent()));
- mnu.addSeparator();
- act=mnu.addAction(tr("Edit tags"),this,SLOT(editCurent()));
-
- mnu.exec(QCursor::pos());
+    QMenu mnu;
+    mnu.addAction(tr("Add to playlist"),this,SLOT(addCurentToPLaylist()));
+    mnu.addAction(tr("Favorite/Unfavorite"),this,SLOT(favoriteCurent()));
+    mnu.addSeparator();
+    mnu.addAction(tr("Edit tags"),this,SLOT(editCurent()));
+    mnu.addSeparator();
+    mnu.addAction(tr("Remove"),this,SLOT(removeFile()));
+    mnu.addSeparator();
+    mnu.addAction(tr("Properies"),this,SLOT(fileProperies()));
+    mnu.exec(QCursor::pos());
 }
 
 void TreeViewAudio::addCurentToPLaylist()
 {
     int row=   selectionModel()->currentIndex().row();
-     QModelIndex idx= model()->index(row,0);
+     QModelIndex idx= model()->index(row,HIDER_ADD);
     if(!idx.isValid()) return;
 
     emit treeAudioClicked(idx);
@@ -74,7 +80,7 @@ void TreeViewAudio::addCurentToPLaylist()
 void TreeViewAudio::favoriteCurent()
 {
     int row=   selectionModel()->currentIndex().row();
-     QModelIndex idx= model()->index(row,1);
+     QModelIndex idx= model()->index(row,HIDER_FAVO);
     if(!idx.isValid()) return;
 
     emit treeAudioClicked(idx);
@@ -83,10 +89,43 @@ void TreeViewAudio::favoriteCurent()
 void TreeViewAudio::editCurent()
 {
     int row=   selectionModel()->currentIndex().row();
-     QModelIndex idx= model()->index(row,2);
+     QModelIndex idx= model()->index(row,HIDER_TITLE);
 
      if(!idx.isValid()) return;
 
     QString path=idx.data(Qt::UserRole).toString();
-    emit editCurIndex(path);
+    QProcess p;
+    p.startDetached("easytag",QStringList()<<path);
+}
+
+void TreeViewAudio::fileProperies()
+{
+    QVariantMap map;
+    int row=   selectionModel()->currentIndex().row();
+
+    map["Title"]= model()->index(row,HIDER_TITLE).data().toString();
+    map["Album"]= model()->index(row,HIDER_ALBUM).data().toString();
+    map["Artist"]=model()->index(row,HIDER_ARTIST).data().toString();
+    map["Path"]=  model()->index(row,HIDER_TITLE).data(Qt::UserRole).toString();
+
+    PropertiesFile *dlg=new PropertiesFile;
+    dlg->setInformations(map);
+    dlg->exec();
+    delete dlg;
+
+}
+
+void TreeViewAudio::removeFile()
+{
+    int row=   selectionModel()->currentIndex().row();
+    QModelIndex idx= model()->index(row,HIDER_TITLE);
+
+    if(!idx.isValid()) return;
+
+    QString path=idx.data(Qt::UserRole).toString();
+    if(DataBase::removeSong(path)){
+         QSettings s(D_CACHE+"/filesinfo",QSettings::IniFormat);
+        s.remove(path);
+        emit updateCurent();
+    }
 }

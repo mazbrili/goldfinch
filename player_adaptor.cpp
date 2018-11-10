@@ -1,62 +1,110 @@
+/***************************************************************************
+ *      Project created by QtCreator 2018-06-01T17:15:24                   *
+ *                                                                         *
+ *    goldfinch Copyright (C) 2014 AbouZakaria <yahiaui@gmail.com>         *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "player_adaptor.h"
+#include <QDBusConnection>
 
-
-player_adaptor::player_adaptor(QObject *parent)
+//---------------------------------------------------------------MainAdaptor
+MainAdaptor::MainAdaptor(QObject *parent)
     : QDBusAbstractAdaptor(parent)
 {
     // constructor
     setAutoRelaySignals(true);
-
 }
 
-player_adaptor::~player_adaptor()
+MainAdaptor::~MainAdaptor()
+{
+    // destructor
+}
+
+void MainAdaptor:: Quit()
+{  QMetaObject::invokeMethod(parent()->parent()->parent()->parent(), "close"); }
+
+void MainAdaptor:: Raise()
+{  QMetaObject::invokeMethod(parent()->parent()->parent()->parent(), "showRaise"); }
+
+ void MainAdaptor:: SetUrl(const QString &url)
+ {
+     qDebug()<<"Adaptor:: setUrl"<<url;
+  //   QUrl urlm=QUrl::fromLocalFile(url);
+  QMetaObject::invokeMethod(parent(), "setFile", Q_ARG(QString, url));
+ // QMetaObject::invokeMethod(parent(), "playLast");
+ }
+//----------------------------------------------------------PlayerAdaptor
+PlayerAdaptor::PlayerAdaptor(QObject *parent)
+    : QDBusAbstractAdaptor(parent)
+{
+    // constructor
+    setAutoRelaySignals(true);
+}
+
+PlayerAdaptor::~PlayerAdaptor()
 {
     // destructor
 
 }
 
+//--------------------------- METHODS ---------------------------
 
-void player_adaptor::Seek(int Offset)
-  {
-     QMetaObject::invokeMethod(parent(), "seek", Q_ARG(int, Offset));
+void PlayerAdaptor::Seek(int Offset)
+{  QMetaObject::invokeMethod(parent(), "seek", Q_ARG(int, Offset));}
 
-  }
-void player_adaptor::Play()
-{   QMetaObject::invokeMethod(parent(), "play");}
+void PlayerAdaptor::Play()
+{  QMetaObject::invokeMethod(parent(), "play");     }
 
-void player_adaptor::Pause()
-{  QMetaObject::invokeMethod(parent(), "pause"); }
+void PlayerAdaptor::Pause()
+{  QMetaObject::invokeMethod(parent(), "pause");    }
 
-void player_adaptor::Stop()
-{  QMetaObject::invokeMethod(parent(), "stop"); }
+void PlayerAdaptor::Stop()
+{  QMetaObject::invokeMethod(parent(), "stop");     }
 
-void player_adaptor::PlayPause()
-{  QMetaObject::invokeMethod(parent(), "playPause"); }
+void PlayerAdaptor::PlayPause()
+{  QMetaObject::invokeMethod(parent(), "playPause");}
 
-void player_adaptor::Next()
-{ QMetaObject::invokeMethod(parent(), "next"); }
+void PlayerAdaptor::Next()
+{  QMetaObject::invokeMethod(parent(), "next");     }
 
-void player_adaptor::Previous()
+void PlayerAdaptor::Previous()
 {  QMetaObject::invokeMethod(parent(), "previous"); }
 
-bool player_adaptor::CanPlay()
+//--------------------------- PROOERTIES ---------------------------
+
+bool PlayerAdaptor::CanPlay()
 {
     bool retVal;
     QMetaObject::invokeMethod(parent(), "canPlay", Qt::DirectConnection,
                               Q_RETURN_ARG(bool, retVal)  );
-
     return  retVal;
 }
 
-bool player_adaptor::CanPause()
+bool PlayerAdaptor::CanPause()
 {
-    bool retVal;
-    QMetaObject::invokeMethod(parent(), "canPause", Qt::DirectConnection,
-                              Q_RETURN_ARG(bool, retVal));
-    return  retVal;
+        bool retVal;
+        QMetaObject::invokeMethod(parent(), "canPause", Qt::DirectConnection,
+                                  Q_RETURN_ARG(bool, retVal));
+        return  retVal;
+  //  return true;
 }
 
-bool player_adaptor::CanSeek()
+bool PlayerAdaptor::CanSeek()
 {
     bool retVal;
     QMetaObject::invokeMethod(parent(), "canSeek", Qt::DirectConnection,
@@ -64,24 +112,24 @@ bool player_adaptor::CanSeek()
     return  retVal;
 }
 
-bool player_adaptor::CanGoPrevious()
+bool PlayerAdaptor::CanGoPrevious()
 {
     bool retVal;
     QMetaObject::invokeMethod(parent(), "canGoPrevious", Qt::DirectConnection,
                               Q_RETURN_ARG(bool, retVal));
     return  retVal;
+    // return  true;
 }
 
-bool player_adaptor::CanGoNext()
+bool PlayerAdaptor::CanGoNext()
 {
-
     bool retVal;
     QMetaObject::invokeMethod(parent(), "canGoNext", Qt::DirectConnection,
                               Q_RETURN_ARG(bool, retVal));
     return  retVal;
 }
 
-QString player_adaptor::PlaybackStatus()
+QString PlayerAdaptor::PlaybackStatus()
 {
     QString retVal;
     QMetaObject::invokeMethod(parent(), "playbackStatus", Qt::DirectConnection,
@@ -89,11 +137,43 @@ QString player_adaptor::PlaybackStatus()
     return  retVal;
 }
 
-QVariantMap  player_adaptor::Metadata()
+qint64 PlayerAdaptor::Position()
+{
+    qlonglong retVal;
+    QMetaObject::invokeMethod(parent(), "position", Qt::DirectConnection,
+                              Q_RETURN_ARG(qlonglong, retVal));
+    return  retVal;
+}
+
+void PlayerAdaptor::setPos(qint64 p)
+{
+    QVariantMap changedProps;
+    changedProps.insert("Position", p);
+    propertiesChanged(changedProps);
+}
+
+QVariantMap  PlayerAdaptor::Metadata()
 {
     QVariantMap map;
-
     QMetaObject::invokeMethod(parent(), "metadata", Qt::DirectConnection,
                               Q_RETURN_ARG(QVariantMap, map));
     return  map;
+}
+
+//--------------------------- SIGNALS ---------------------------
+void PlayerAdaptor::propertiesChanged(QVariantMap changedProps)
+{
+    QDBusMessage signal = QDBusMessage::createSignal(
+                "/org/mpris/MediaPlayer2",
+                "org.freedesktop.DBus.Properties",
+                "PropertiesChanged");
+
+    signal << "org.mpris.MediaPlayer2.Player";
+    signal << changedProps;
+    signal << QStringList();
+
+    if (QDBusConnection::sessionBus().send(signal))
+        qDebug()<<"emited"<<signal.arguments();
+    else
+        qDebug()<<"No Emited"<<signal.arguments();
 }

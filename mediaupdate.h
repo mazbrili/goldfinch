@@ -1,3 +1,24 @@
+/***************************************************************************
+ *      Project created by QtCreator 2018-06-01T17:15:24                   *
+ *                                                                         *
+ *    goldfinch Copyright (C) 2014 AbouZakaria <yahiaui@gmail.com>         *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #ifndef MEDIAUPDATE_H
 #define MEDIAUPDATE_H
 #include "database.h"
@@ -15,17 +36,13 @@ class Thread : public QThread
 public:
     Thread();
     void setFile(QVariantMap map){mMap=map;}
-    QUrl curentPath(){return mUrl;}
 signals:
-    void removelast();
+    void removeKey(const QString &key);
 protected:
     void run();
 
 private:
-    QUrl mUrl;
     QVariantMap mMap;
-    DataBase *mDataBase;
-
 
 private slots:
 
@@ -37,44 +54,52 @@ class MediaUpdate : public QObject
     Q_OBJECT
 public:
     explicit MediaUpdate(QObject *parent = nullptr);
-  ~MediaUpdate();
+    ~MediaUpdate();
 signals:
     void updated();
     void progressMaxChanged(int max);
     void progressValueChanged(int value);
-    void dirNidUpdate(bool);
+    void directoryNeedUpdate(bool);
+
 public slots:
-    void addUpdateDirectory();
-    void scanDirectory(const QString &path);
-    void updateDirectory(const QString &dir);
+
+    //!  اضافة ملفات جديدة
     void addFiles(const QList<QUrl>urls);
+    //!  تحديث ملف
     void updateFile(QVariantMap map, const QString &path);
-void setUpdateDirs(bool update);
-//    void setlistDirs(QStringList list){mLisDirs=list;}
-//    QStringList listDirs(){return mLisDirs;}
+    //!  تحديث مجلدات
+    void setUpdateDirs(bool update);
+    //!
+    void getDirListOptions();
 
 private slots:
+
+    //!
     void metaDataChanged();
+    //!  تحميل المجلدات المراقبة
     void chargeDirectoryWatcher();
-void directoryChanged(const QString &path);
+    //!   اشارة عند نغير مجلد
+    void directoryChanged(const QString &path);
+    //! تحديث مجلد بعد الطلب
+    void updateDirectory(const QString &dir);
+    //!  اضافة او تحديث مجلدات
+    void addUpdateDirectories(bool all);
+    //!  فحص مجلد
+    void scanDirectory(const QString &path);
 
-    //thread
+    //!  thread
     void startNewThread();
-    void removelast();
+    //!  thread
+    void removelast(const QString &key);
+
 private:
-    QMediaPlayer *player;
-    QMediaPlaylist *playlist;
-  //  DataBase *mDataBase;
+    QMediaPlayer *mPlayer;
+    QMediaPlaylist *mPlaylist;
     Thread   *mThread;
-    QList<QUrl> mListMedia;
-
-   QStringList mLisUpdateDirs;
-QFileSystemWatcher *mWatcher;
-    //thred
-QList <QVariantMap>listMap;
-QStringList listThread;
-    int mValue;
-
+    QStringList mLisUpdateDirs;
+    QFileSystemWatcher *mWatcher;
+    QList <QVariantMap>mListMap;
+    QMap<QString,QVariantMap> mMapTread;
 
 };
 

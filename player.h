@@ -1,57 +1,30 @@
-/****************************************************************************
-**
-** Copyright (C) 2017 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the examples of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** BSD License Usage
-** Alternatively, you may use this file under the terms of the BSD license
-** as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of The Qt Company Ltd nor the names of its
-**     contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+/***************************************************************************
+ *      Project created by QtCreator 2018-06-01T17:15:24                   *
+ *                                                                         *
+ *    goldfinch Copyright (C) 2014 AbouZakaria <yahiaui@gmail.com>         *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "playercontrols.h"
 #include "widgetplaylist.h"
+#include "player_adaptor.h"
+
 #include <QWidget>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
@@ -76,9 +49,8 @@ public:
     explicit Player(QListView *playlist,QWidget *parent = nullptr);
     ~Player();
 
-    bool isPlayerAvailable() const;
 
-    void addToPlaylist(QList<QVariantMap> &urls);
+    void addToPlaylist(QList<QVariantMap> &files);
     void addToPlaylist( QList<QUrl> &urls);
 
 
@@ -91,33 +63,43 @@ signals:
     void playBackChanged(QString,int=0 );
     void iconsChanged();
     void imageChanged(QImage);
-    void titleChanged(QString);
+    void titleChanged(QString,QString);
     void infoChanged(QString);
     void durationChanged(qint64 duration);
     void positionChanged(qint64 progress);
     void updateSong(QVariantMap,QString);
-
+ void propertiesChanged(QString,QVariantMap,QStringList);
 
 public slots:
+
     // dbus
-    void play(){  m_player->play();  }
-    void pause(){  m_player->pause();  }
-    void stop(){  m_player->stop();  }
-    void next(){ m_playlist->next();  }
+    void play() {   mPlayer->play();   }
+    void pause(){   mPlayer->pause();  }
+    void stop() {   mPlayer->stop();   }
+    void next() {   mPlaylist->next(); }
     void previous();
     void playPause();
-    void seek(int seconds);
-    bool canPlay() {  return !m_playlist->isEmpty(); }
-    bool canGoNext(){return true /*m_playlist->currentIndex()<(m_playlist->mediaCount()-1)*/;}
-    bool canGoPrevious(){return true /*m_playlist->currentIndex()>0*/;}
-    bool canPause(){return true /*m_player->isAudioAvailable()*/;}
-    bool canSeek(){return  m_player->isSeekable();}
+    void setSeek(int seconds);
+    qint64 position(){return mPlayer->position(); }
+    bool canPlay() {
+       if(mPlayer->isAvailable())return false;
+       return true;
+    }
+    bool canPause() {
+       if(!mPlayer->isAvailable()) return false;
+       return true;
+    }
+    bool canGoNext();
+    bool canGoPrevious();
+    bool canSeek(){return  mPlayer->isSeekable();}
     QVariantMap metadata(){return mMetaDataMap;}
     QString playbackStatus(){return mPlaybackStatus;}
+    //--
     void rmovePlaylistItem(QModelIndex idx);
     void moveMedia(int from,int to);
     void cleanList();
     void setPlaybackMode(int value);
+    void setFile(const QString &file);
 private slots:
 
     void metaDataChanged();
@@ -131,22 +113,27 @@ private slots:
     void displayErrorMessage();
     void save(const QString &name);
     void openSavedList(QString name);
+    void setduration(qint64 duration);
 private:
 
-    void setTrackInfo(const QString &info);
-    void setStatusInfo(const QString &info);
-    void handleCursor(QMediaPlayer::MediaStatus status);
+    void setTrackInfo  (const QString &info);
+    void setStatusInfo (const QString &info);
+    void handleCursor  (QMediaPlayer::MediaStatus status);
     void setCovertImage(QImage img, QString album);
 
-    QMediaPlayer *m_player = nullptr;
-    QMediaPlaylist *m_playlist = nullptr;
- PlayerControls *controls;
-    PlaylistModel *m_playlistModel = nullptr;
-    QListView *m_playlistView ;
-    QString m_trackInfo;
-    QString m_statusInfo;
-    QString mPlaybackStatus;
-    QVariantMap mMetaDataMap;
+    PlayerAdaptor  *mPlayerAdaptor;
+    QMediaPlayer   *mPlayer = nullptr;
+    QMediaPlaylist *mPlaylist = nullptr;
+    PlayerControls *mControls;
+    PlaylistModel  *mPlaylistModel = nullptr;
+    QListView      *mPlaylistView ;
+    QVariantMap     mMetaDataMap;
+    QString         mTrackInfo;
+    QString         mStatusInfo;
+    QString         mPlaybackStatus;
+
+
+ // FreeDesktopAdaptor *mFreeDesktopAdaptor;
 };
 
 #endif // PLAYER_H

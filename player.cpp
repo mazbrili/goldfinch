@@ -1,55 +1,26 @@
-/****************************************************************************
-**
-** Copyright (C) 2017 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the examples of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** BSD License Usage
-** Alternatively, you may use this file under the terms of the BSD license
-** as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of The Qt Company Ltd nor the names of its
-**     contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+/***************************************************************************
+ *      Project created by QtCreator 2018-06-01T17:15:24                   *
+ *                                                                         *
+ *    goldfinch Copyright (C) 2014 AbouZakaria <yahiaui@gmail.com>         *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
 #include "player.h"
-
+#include "database.h"
 #include "tumb.h"
 #include "playercontrols.h"
 #include "playlistmodel.h"
@@ -61,88 +32,103 @@
 #include <QFontMetrics>
 #include <QSettings>
 Player::Player(QListView *playlist, QWidget *parent)
-    : QWidget(parent),m_playlistView(playlist)
+    : QWidget(parent),mPlaylistView(playlist)
 {
 
-    m_player = new QMediaPlayer(this);
+    new MainAdaptor(this);
+    mPlayerAdaptor=new PlayerAdaptor(this);
 
+    QDBusConnection connection = QDBusConnection::sessionBus();
+    connection.registerObject(QString("/org/mpris/MediaPlayer2"),QString("Player"), this);
+    mPlayer = new QMediaPlayer(this);
     qInfo() << "Supported audio roles:";
-    for (QAudio::Role role : m_player->supportedAudioRoles())
+    for (QAudio::Role role : mPlayer->supportedAudioRoles())
         qInfo() << "    " << role;
-    foreach (QString s, m_player->supportedMimeTypes()){
+    foreach (QString s, mPlayer->supportedMimeTypes()){
+        qInfo() << "    " << s;
+    }
+    foreach (QString s, mPlayer->supportedCustomAudioRoles()){
         qInfo() << "    " << s;
     }
     // owned by PlaylistModel
-    m_playlist = new QMediaPlaylist();
-    m_player->setPlaylist(m_playlist);
+    mPlaylist = new QMediaPlaylist();
+    mPlayer->setPlaylist(mPlaylist);
 
-player_adaptor *mPlayer_adaptor=new player_adaptor(this);
+    //PlayerAdaptor *mPlayerAdaptor =new PlayerAdaptor(this);
+    //mFreeDesktopAdaptor=new FreeDesktopAdaptor(mPlayerAdaptor);
 
-    connect(m_player, QOverload<>::of(&QMediaPlayer::metaDataChanged), this, &Player::metaDataChanged);
-    connect(m_playlist, &QMediaPlaylist::currentIndexChanged, this, &Player::playlistPositionChanged);
-    connect(m_player, &QMediaPlayer::mediaStatusChanged, this, &Player::statusChanged);
-    connect(m_player, &QMediaPlayer::bufferStatusChanged, this, &Player::bufferingProgress);
-    connect(m_player, QOverload<QMediaPlayer::Error>::of(&QMediaPlayer::error), this, &Player::displayErrorMessage);
-
-
-    m_playlistModel = new PlaylistModel(this);
-    m_playlistModel->setPlaylist(m_playlist);
-
-    m_playlistView->setModel(m_playlistModel);
-    m_playlistView->setCurrentIndex(m_playlistModel->index(m_playlist->currentIndex(), 0));
-
-    connect(m_playlistView, &QAbstractItemView::activated, this, &Player::jump);
+    connect(mPlayer, QOverload<>::of(&QMediaPlayer::metaDataChanged), this, &Player::metaDataChanged);
+    connect(mPlaylist, &QMediaPlaylist::currentIndexChanged, this, &Player::playlistPositionChanged);
+    connect(mPlayer, &QMediaPlayer::mediaStatusChanged, this, &Player::statusChanged);
+    connect(mPlayer, &QMediaPlayer::bufferStatusChanged, this, &Player::bufferingProgress);
+    connect(mPlayer, QOverload<QMediaPlayer::Error>::of(&QMediaPlayer::error), this, &Player::displayErrorMessage);
 
 
-    controls = new PlayerControls(this);
-    controls->setState(m_player->state());
-    controls->setVolume(m_player->volume());
+    mPlaylistModel = new PlaylistModel(this);
+    mPlaylistModel->setPlaylist(mPlaylist);
 
-    connect(m_player, &QMediaPlayer::durationChanged, controls, &PlayerControls::durationChanged);
-    connect(m_player, &QMediaPlayer::positionChanged, controls, &PlayerControls::positionChanged);
-    connect(m_player, &QMediaPlayer::positionChanged, mPlayer_adaptor, &player_adaptor::Seeked);
+    mPlaylistView->setModel(mPlaylistModel);
+    mPlaylistView->setCurrentIndex(mPlaylistModel->index(mPlaylist->currentIndex(), 0));
 
-    connect(controls, &PlayerControls::play, m_player, &QMediaPlayer::play);
-    connect(controls, &PlayerControls::pause, m_player, &QMediaPlayer::pause);
-    connect(controls, &PlayerControls::stop, m_player, &QMediaPlayer::stop);
-    connect(controls, &PlayerControls::next, m_playlist, &QMediaPlaylist::next);
-    connect(controls, &PlayerControls::previous, this, &Player::previous);
-    connect(controls, &PlayerControls::changeVolume, m_player, &QMediaPlayer::setVolume);
-    connect(controls, &PlayerControls::changeRate, m_player, &QMediaPlayer::setPlaybackRate);
-    connect(controls, &PlayerControls::seek, this, &Player::seek);
+    connect(mPlaylistView, &QAbstractItemView::activated, this, &Player::jump);
 
-    connect(this, &Player::iconsChanged, controls, &PlayerControls::setupIcons);
- //   connect(this, &Player::canPlay, controls, &PlayerControls::setPlayEnabled);
-  //  connect(this, &Player::canNext, controls, &PlayerControls::setNextEnabled);
-  //  connect(this, &Player::canPrev, controls, &PlayerControls::setPrevEnabled);
 
-    connect(m_player, &QMediaPlayer::stateChanged, controls, &PlayerControls::setState);
-    connect(m_player, &QMediaPlayer::stateChanged, this, &Player::stateChanged);
-    connect(m_player, &QMediaPlayer::volumeChanged, controls, &PlayerControls::setVolume);
-   connect(m_player, SIGNAL(metaDataChanged()), SLOT(metaDataChanged()));
-  //   connect(m_player, &QMediaPlayer::metaDataChanged,this, &Player::metaDataChanged);
+    mControls = new PlayerControls(this);
+    mControls->setState(mPlayer->state());
+    mControls->setVolume(mPlayer->volume());
+
+    connect(mPlayer, &QMediaPlayer::durationChanged, mControls, &PlayerControls::durationChanged);
+    connect(mPlayer, &QMediaPlayer::durationChanged, this, &Player::setduration);
+
+    connect(mPlayer, &QMediaPlayer::positionChanged, mControls, &PlayerControls::positionChanged);
+    // connect(mPlayer, &QMediaPlayer::positionChanged, mPlayerAdaptor, &PlayerAdaptor::setPos);
+    //   connect(this, &Player::propertiesChanged, mFreeDesktopAdaptor, &FreeDesktopAdaptor::PropertiesChanged);
+
+    connect(mControls, &PlayerControls::play, mPlayer, &QMediaPlayer::play);
+    connect(mControls, &PlayerControls::pause, mPlayer, &QMediaPlayer::pause);
+    connect(mControls, &PlayerControls::stop, mPlayer, &QMediaPlayer::stop);
+    connect(mControls, &PlayerControls::next, mPlaylist, &QMediaPlaylist::next);
+    connect(mControls, &PlayerControls::previous, this, &Player::previous);
+    connect(mControls, &PlayerControls::changeVolume, mPlayer, &QMediaPlayer::setVolume);
+    connect(mControls, &PlayerControls::changeRate, mPlayer, &QMediaPlayer::setPlaybackRate);
+   // connect(controls, &PlayerControls::seek, this, &Player::seek);
+
+    connect(this, &Player::iconsChanged, mControls, &PlayerControls::setupIcons);
+    //   connect(this, &Player::canPlay, controls, &PlayerControls::setPlayEnabled);
+    //  connect(this, &Player::canNext, controls, &PlayerControls::setNextEnabled);
+    //  connect(this, &Player::canPrev, controls, &PlayerControls::setPrevEnabled);
+
+    connect(mPlayer, &QMediaPlayer::stateChanged, mControls, &PlayerControls::setState);
+    connect(mPlayer, &QMediaPlayer::stateChanged, this, &Player::stateChanged);
+    connect(mPlayer, &QMediaPlayer::volumeChanged, mControls, &PlayerControls::setVolume);
+    //  connect(mPlayer, SIGNAL(metaDataChanged()), SLOT(metaDataChanged()));
+    // connect(m_player, &QMediaPlayer::metaDataChanged,this, &Player::metaDataChanged);
 
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->setMargin(0);
     hLayout->addSpacing(3);
-    hLayout->addWidget(controls);
+    hLayout->addWidget(mControls);
     hLayout->addSpacing(3);
 
 
     setLayout(hLayout);
 
-    if (!isPlayerAvailable()) {
+    if (!mPlayer->isAvailable()) {
         QMessageBox::warning(this, tr("Service not available"),
                              tr("The QMediaPlayer object does not have a valid service.\n"\
                                 "Please check the media service plugins are installed."));
 
-        controls->setEnabled(false);
-        m_playlistView->setEnabled(false);
+        mControls->setEnabled(false);
+        mPlaylistView->setEnabled(false);
     }
 
- openSavedList("playlist");
-  //  controls->setEnabled(false);
-  //  metaDataChanged();
+    openSavedList("playlist");
+    //  controls->setEnabled(false);
+    //  metaDataChanged();
+
+
+    //  QObject::connect(w.player(),&Player::seek,p,&PlayerAdaptor::setProperty)
+    //new FreeDesktopAdaptor(w.player());
 
 }
 
@@ -154,87 +140,85 @@ Player::~Player()
 void Player::rmovePlaylistItem(QModelIndex idx)
 {
     int row=idx.row();
-    m_playlist->removeMedia(row);
+    mPlaylist->removeMedia(row);
     //  m_playlistModel->removeRow(idx.row());
-    m_playlistView->setCurrentIndex(m_playlistModel->index(row,0));
+    mPlaylistView->setCurrentIndex(mPlaylistModel->index(row,0));
 }
 
 void Player::moveMedia(int from,int to)
 {
 
-    if(m_playlist->moveMedia(from,to))
-        m_playlistView->setCurrentIndex(m_playlistModel->index(to,0));
+    if(mPlaylist->moveMedia(from,to))
+        mPlaylistView->setCurrentIndex(mPlaylistModel->index(to,0));
 }
 
 void Player::cleanList()
 {
-    //  qDebug()<<"cleanup";
-    m_playlist->clear();
-    m_playlistModel->clear();
+    mPlaylist->clear();
+    mPlaylistModel->clear();
 }
 
 //-----------------------------------------------------------
-bool Player::isPlayerAvailable() const
-{
-    return m_player->isAvailable();
-}
 
-void Player::addToPlaylist( QList<QVariantMap> &urls)
+//--  Add String list to playlist
+void Player::addToPlaylist( QList<QVariantMap> &files)
 {
     QList<QMap<QString,QUrl>> list;
     QMap<QString,QUrl> map;
 
-    int count=m_playlist->mediaCount();
+    int count=mPlaylist->mediaCount();
 
-    /*
-    for (auto &url: urls) {
+    for (int i = 0; i < files.count(); ++i) {
+        QMap<QString,QVariant> map=files.at(i);
 
-        m_playlist->addMedia(url);
-    }
-*/
-    for (int i = 0; i < urls.count(); ++i) {
-        QMap<QString,QVariant> map=urls.at(i);
 
-        QUrl url;
         QString str=map.value("Url").toString();
-        if(str.startsWith("https:")){
-          url.setUrl(str);
-         m_playlist->addMedia(url);
-        }else{
+         //TODO : fix this Url
+          QUrl url;
+        if(str.contains("://")){ url.setUrl(str); }
+        else{url.setUrl(QUrl::fromLocalFile(str).toString());}
 
-               url.setUrl(QUrl::fromLocalFile(str).toString());
-              m_playlist->addMedia(url);
+        if(url.isValid()){
+            mPlaylist->addMedia(url);
+
+            QString tit=map.value("Title").toString();
+            QModelIndex idx=mPlaylistModel->index(count+i,0);
+            mPlaylistModel->setTitle(idx,url,tit);
         }
-
-        QString tit=map.value("Title").toString();
-        QModelIndex idx=m_playlistModel->index(count+i,0);
-        m_playlistModel->setTitle(idx,url,tit);
-
     }
 
 }
+
+//--  Add Urls to playlist
 void Player::addToPlaylist( QList<QUrl> &urls)
 {
     for (auto &url: urls) {
-        m_playlist->addMedia(url);
+        mPlaylist->addMedia(url);
     }
 }
 
+//--  Add file string to playlist
+void Player::setFile(const QString &file)
+{
+     QUrl url=QUrl::fromLocalFile(file);
+      mPlaylist->addMedia(url);
+      playLast();
+}
 
 void Player::metaDataChanged()
 {
-    if (m_player->isMetaDataAvailable()) {
+    if (mPlayer->isMetaDataAvailable()) {
 
         //---------------------------------------
-        QFileInfo fi=    m_playlist->currentMedia().canonicalUrl().toLocalFile();
-        QString   murl=  m_playlist->currentMedia().canonicalUrl().toString();
-        QString   title= m_player->metaData(QMediaMetaData::Title).toString();
-        QString   album= m_player->metaData(QMediaMetaData::AlbumTitle).toString();
-        QString   artist=m_player->metaData(QMediaMetaData::ContributingArtist).toString();
-        QString   albumArtist=m_player->metaData(QMediaMetaData::AlbumArtist).toString();
-        QString   genre= m_player->metaData(QMediaMetaData::Genre).toString();
-        qlonglong lenght=QVariant(m_player->duration()).toLongLong();
-        QImage    img=m_player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
+        QFileInfo fi=    mPlaylist->currentMedia().canonicalUrl().toLocalFile();
+        QString   murl=  mPlaylist->currentMedia().canonicalUrl().toString();
+        QString   title= mPlayer->metaData(QMediaMetaData::Title).toString();
+        QString   album= mPlayer->metaData(QMediaMetaData::AlbumTitle).toString();
+        QString   artist=mPlayer->metaData(QMediaMetaData::ContributingArtist).toString();
+        QString   albumArtist=mPlayer->metaData(QMediaMetaData::AlbumArtist).toString();
+        QString   genre= mPlayer->metaData(QMediaMetaData::Genre).toString();
+        qlonglong lenght=QVariant(mPlayer->duration()).toLongLong();
+        QImage    img=mPlayer->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
 
         QString duration=QTime::fromMSecsSinceStartOfDay(QVariant(lenght).toInt()).toString();
 
@@ -246,37 +230,32 @@ void Player::metaDataChanged()
         mMetaDataMap.insert("xesam:title",title);
         mMetaDataMap.insert("xesam:album",album);
         mMetaDataMap.insert("xesam:url",murl);
-        mMetaDataMap.insert("xesam:artist",artist);
+        mMetaDataMap.insert("xesam:artist",QStringList()<<artist);
         mMetaDataMap.insert("mpris:length",lenght);
+        mMetaDataMap.insert("mpris:mpris:artUrl",D_CACHE+"/thumb.jpg");
 
+        //---------------------------------Dbus
+        QVariantMap map;
+        map.insert("Metadata",mMetaDataMap);
+        mPlayerAdaptor->propertiesChanged(map);
         //---------------------------------------
         QString strTit=title.isEmpty() ? fi.fileName() : title;
         QString strInf=QString("%1 - %2").arg(artist).arg(album);
 
-        emit titleChanged(title);
-        emit infoChanged(strInf);
+
+       // emit infoChanged(strInf);
 
         //---------------------------------------
         //        QString artSmall= m_player->metaData(QMediaMetaData::CoverArtUrlSmall).toString();
         //        QString artLarge=m_player->metaData(QMediaMetaData::CoverArtUrlLarge).toString();
 
         //--------------------------------------
-        int in=  m_playlist->currentIndex();
-        QModelIndex idx=m_playlistModel->index(in,0);
-        QUrl url= m_playlist->currentMedia().canonicalUrl();
-        m_playlistModel->setTitle(idx,url,title);
+        int in=  mPlaylist->currentIndex();
+        QModelIndex idx=mPlaylistModel->index(in,0);
+        QUrl url= mPlaylist->currentMedia().canonicalUrl();
+        mPlaylistModel->setTitle(idx,url,title);
         setTrackInfo(title);
 
-        //---------------------------------------
-        QVariantMap map;
-        map["title"]=title;
-        map["artist"]=artist;
-        map["album"]=album;
-        map["genre"]=genre;
-        map["path"]=fi.filePath();  //TODO FIX URL
-        map["duration"]=duration;
-        emit updateSong(map,fi.filePath());
-        //---------------------------------------
         setCovertImage(img,album);
 
 
@@ -286,24 +265,26 @@ void Player::metaDataChanged()
 
 void Player::setCovertImage(QImage img,QString album)
 {
-//    qDebug()<<"image size:"<<img.width();
-//    qDebug()<<"artSmall  :"<<artSmall;
-//    qDebug()<<"artLarge  :"<<artLarge;
+    //    qDebug()<<"image size:"<<img.width();
+    //    qDebug()<<"artSmall  :"<<artSmall;
+    //    qDebug()<<"artLarge  :"<<artLarge;
 
     if(!img.isNull()){
         //   mLabelimg->setPixmap(QPixmap::fromImage(img));
+        img.save(D_CACHE+"/thumb.jpg");
         emit imageChanged(img);
         return;
     }
 
-    QFileInfo fi=m_playlist->currentMedia().canonicalUrl().toLocalFile();
-    //  qDebug()<<"QFileInfo:"<<fi.filePath();
+    QFileInfo fi=mPlaylist->currentMedia().canonicalUrl().toLocalFile();
+
     QString path=fi.absolutePath();
-    //  TODO: fix title album
+
     QIcon icon=Tumb::iconAlbum((album.isEmpty() ? fi.absoluteDir().dirName():album),path);
     QString imgPath= Tumb::imageAlbumPath(
                 (album.isEmpty() ? fi.absoluteDir().dirName():album),path);
     img.load(imgPath);
+    img.save(D_CACHE+"/thumb.jpg");
     emit imageChanged(img);
 
 }
@@ -312,18 +293,18 @@ void Player::previous()
 {
     // Go to previous track if we are within the first 5 seconds of playback
     // Otherwise, seek to the beginning.
-    if (m_player->position() <= 5000)
-        m_playlist->previous();
+    if (mPlayer->position() <= 5000)
+        mPlaylist->previous();
     else
-        m_player->setPosition(0);
+        mPlayer->setPosition(0);
 }
 void Player::playLast()
 {
 
-    QModelIndex idx=m_playlistModel->index( m_playlist->mediaCount()-1,0);
+    QModelIndex idx=mPlaylistModel->index( mPlaylist->mediaCount()-1,0);
     if (idx.isValid()) {
-        m_playlist->setCurrentIndex(idx.row());
-        m_player->play();
+        mPlaylist->setCurrentIndex(idx.row());
+        mPlayer->play();
     }
 
 }
@@ -331,24 +312,28 @@ void Player::playLast()
 void Player::jump(const QModelIndex &index)
 {
     if (index.isValid()) {
-        m_playlist->setCurrentIndex(index.row());
-        m_player->play();
+        mPlaylist->setCurrentIndex(index.row());
+        mPlayer->play();
     }
 }
 
 void Player::playlistPositionChanged(int currentItem)
 {
-    m_playlistView->setCurrentIndex(m_playlistModel->index(currentItem, 0));
-//    emit canPlay(m_playlist->mediaCount()>0);
-//    emit canNext(m_playlist->currentIndex()<(m_playlist->mediaCount()-1)) ;
-//    emit canPrev(m_playlist->currentIndex()>0);
+    mPlaylistView->setCurrentIndex(mPlaylistModel->index(currentItem, 0));
 
+    //---------------------------------Dbus
+    QVariantMap map;
+    map.insert("CanGoNext",canGoNext());
+    map.insert("CanGoPrevious",canGoPrevious());
+    map.insert("CanPlay",mPlayer->isAvailable());
+
+    mPlayerAdaptor->propertiesChanged(map);
 }
 
-void Player::seek(int seconds)
-{
-    m_player->setPosition(seconds * 1000);
-}
+void Player::setSeek(int seconds)
+{ mPlayer->setPosition(seconds * 1000);}
+
+
 
 void Player::statusChanged(QMediaPlayer::MediaStatus status)
 {
@@ -379,9 +364,7 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
         break;
     }
 
-
 }
-
 
 void Player::handleCursor(QMediaPlayer::MediaStatus status)
 {
@@ -403,63 +386,69 @@ void Player::bufferingProgress(int progress)
 
 void Player::setStatusInfo(const QString &info)
 {
-    m_statusInfo = info;
-    if (!m_statusInfo.isEmpty())
+    mStatusInfo = info;
+    if (!mStatusInfo.isEmpty())
         //    setStatusTip()
-        emit  playBackChanged(QString("%1 | %2").arg(m_trackInfo).arg(m_statusInfo));
+        emit  playBackChanged(QString("%1 | %2").arg(mTrackInfo).arg(mStatusInfo));
     else{
-        emit   playBackChanged(m_trackInfo);
+        emit   playBackChanged(mTrackInfo);
 
-        stateChanged(m_player->state());
+        stateChanged(mPlayer->state());
     }
 
-     //emit playBackChanged
+    //emit playBackChanged
 }
 
 void Player::displayErrorMessage()
 {
-    emit  playBackChanged(m_player->errorString());
+    emit  playBackChanged(mPlayer->errorString());
 }
 
 void Player::playPause()
 {
-    switch (m_player->state()) {
+    switch (mPlayer->state()) {
     case QMediaPlayer::StoppedState:
     case QMediaPlayer::PausedState:
-         play();
+        play();
         break;
     case QMediaPlayer::PlayingState:
-         pause();
+        pause();
         break;
     }
 }
 
 void Player::stateChanged(QMediaPlayer::State state)
 {
-
+    QString pStatu;;
     switch (state) {
     case QMediaPlayer::StoppedState:
         mPlaybackStatus=tr("Stopped");
-        emit playBackChanged(QString("%1 | %2").arg(m_trackInfo).arg(tr("Stopped")));
+        pStatu="Stopped";
+        emit playBackChanged(QString("%1 | %2").arg(mTrackInfo).arg(tr("Stopped")));
         break;
     case QMediaPlayer::PlayingState:
         mPlaybackStatus=tr("Playing");
-        emit playBackChanged(QString("%1 | %2").arg(m_trackInfo).arg(tr("Playing")));
+        pStatu="Playing";
+        emit playBackChanged(QString("%1 | %2").arg(mTrackInfo).arg(tr("Playing")));
         break;
     case QMediaPlayer::PausedState:
-         mPlaybackStatus=tr("Paused");
-        emit playBackChanged(QString("%1 | %2").arg(m_trackInfo).arg(tr("Paused")));
+        mPlaybackStatus=tr("Paused");
+        pStatu="Paused";
+        emit playBackChanged(QString("%1 | %2").arg(mTrackInfo).arg(tr("Paused")));
         break;
     }
-
+    //---------------------------------Dbus
+    QVariantMap map;
+    map["PlaybackStatus"]=pStatu;
+    mPlayerAdaptor->propertiesChanged(map);
 }
 
 
 void Player::setTrackInfo(const QString &info)
 {
-    m_trackInfo = info;
-    if (!m_statusInfo.isEmpty())
-        setStatusInfo(QString("%1 | %2").arg(m_trackInfo).arg(m_statusInfo));
+    mTrackInfo = info;
+    if (!mStatusInfo.isEmpty())
+        setStatusInfo(QString("%1 | %2").arg(mTrackInfo).arg(mStatusInfo));
 }
 
 
@@ -474,9 +463,10 @@ void Player::setPlaybackMode(int value)
     case 4:  mode=QMediaPlaylist::Random;  break;
     default: mode=QMediaPlaylist::Sequential; break;
     }
-    m_playlist->setPlaybackMode(mode);
+    mPlaylist->setPlaybackMode(mode);
 
 }
+
 void Player::save(const QString &name)
 {
 
@@ -485,13 +475,13 @@ void Player::save(const QString &name)
 
     settings.beginWriteArray("Media");
 
-   foreach (QString key,  settings.allKeys()) {
-       settings.remove(key);
-   }
-    int count=  m_playlist->mediaCount();
+    foreach (QString key,  settings.allKeys()) {
+        settings.remove(key);
+    }
+    int count=  mPlaylist->mediaCount();
     for (int i = 0; i < count; ++i) {
-        QString url = m_playlist->media(i).canonicalUrl().toString();
-        QString title=m_playlistModel->mediaTitle(url);
+        QString url = mPlaylist->media(i).canonicalUrl().toString();
+        QString title=mPlaylistModel->mediaTitle(url);
 
         settings.setArrayIndex(i);
         settings.setValue("Title", title);
@@ -500,15 +490,16 @@ void Player::save(const QString &name)
     settings.endArray();
 
     settings.beginGroup("Curent");
-    int idx=m_playlist->currentIndex();
-    qint64 pos=m_player->position();
+    int idx=mPlaylist->currentIndex();
+    qint64 pos=mPlayer->position();
     settings.setValue("Index", idx);
     settings.setValue("Pos", pos);
-    settings.setValue("Duration", m_player->duration());
+    settings.setValue("Duration", mPlayer->duration());
     settings.endGroup();
 
 
 }
+
 void Player::openSavedList(QString name)
 {
 
@@ -520,14 +511,16 @@ void Player::openSavedList(QString name)
     for (int i = 0; i < count; ++i) {
         settings.setArrayIndex(i);
 
-          QUrl url2 =settings.value("Url").toString();
+        QUrl url2 =settings.value("Url").toString();
 
-           qDebug()<<"<<<<<<<<<<<<<<<"<<url2;
 
         QString title=settings.value("Title").toString();
-        m_playlist->addMedia(url2);
-        QModelIndex idx=m_playlistModel->index(i,0);
-        m_playlistModel->setTitle(idx,url2,title);
+        mPlaylist->addMedia(url2);
+
+        qDebug()<<url2.scheme()<<url2.isLocalFile()<<url2;
+
+        QModelIndex idx=mPlaylistModel->index(i,0);
+        mPlaylistModel->setTitle(idx,url2,title);
 
     }
     settings.endArray();
@@ -537,19 +530,42 @@ void Player::openSavedList(QString name)
 
     int idx=settings.value("Index",0).toInt();
     qint64 pos=settings.value("Pos",0).toLongLong();
-    qint64 duration=settings.value("Duration",100).toLongLong();
+    //qint64 duration=settings.value("Duration",100).toLongLong();
 
     settings.endGroup() ;
-    m_playlist->setCurrentIndex(idx);
-    qDebug()<<"player pos"<<pos<<duration;
-
-        m_player->setPosition(pos);
+    mPlaylist->setCurrentIndex(idx);
+    mPlayer->setPosition(pos);
+    metaDataChanged();
 
 }
 
-// bool Player::canPlay()
-// {
-//  //  qDebug()<<!m_playlist->isEmpty();
-//         return !m_playlist->isEmpty();
+void Player::setduration(qint64 duration)
+{
+        emit titleChanged(mMetaDataMap.value("xesam:title").toString(),
+                          mMetaDataMap.value("xesam:artist").toString()+"-"+
+                          mMetaDataMap.value("xesam:album").toString());
+    QString file=mPlayer->currentMedia().canonicalUrl().toLocalFile();
+    QString mDur=QTime::fromMSecsSinceStartOfDay(QVariant(duration).toInt()).toString();
+    QString dataDur=  DataBase::duration(file);
+    qDebug()<<" Player::durationChanged"<<mDur<<dataDur;
+    if(mDur!=dataDur)
+        DataBase::setDuration(mDur,file);
 
-// }
+
+}
+
+bool Player::canGoNext()
+{
+    if(mPlaylist->currentIndex()<(mPlaylist->mediaCount()-1))
+        return true;
+
+    return false;
+}
+
+bool Player::canGoPrevious()
+{
+    if(mPlaylist->currentIndex()>0)
+        return true;
+
+    return false;
+}

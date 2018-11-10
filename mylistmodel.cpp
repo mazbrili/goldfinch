@@ -1,8 +1,29 @@
+/***************************************************************************
+ *      Project created by QtCreator 2018-06-01T17:15:24                   *
+ *                                                                         *
+ *    goldfinch Copyright (C) 2014 AbouZakaria <yahiaui@gmail.com>         *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "mylistmodel.h"
 #include "listeditor.h"
 #include "tumb.h"
 #include <QSettings>
-#include <QDebug>
+//#include <QDebug>
 MyListModel::MyListModel( QObject *parent) :
     QStandardItemModel(parent)
 {
@@ -58,7 +79,6 @@ void MyListModel::chargeCategory(QString curentName, int curent, int child,int p
     foreach(QString title,list)
     {
 
-
         if(title.isEmpty()||title.isNull())
             continue;
 
@@ -66,7 +86,7 @@ void MyListModel::chargeCategory(QString curentName, int curent, int child,int p
         item->setText(title);
         item->setData(title,USER_TITLE);
         item->setData(child,USER_ID);
-        item->setData(CAT_NULL,USER_CHILD_ID);
+        item->setData(COL_I_NULL,USER_CHILD_ID);
         item->setData(curentName,USER_PARENT_NAME);
         //! ----------------------* IDITOR *---------------------------//
         item->setData(QVariant::fromValue(Iditoring()),Qt::EditRole);
@@ -79,51 +99,49 @@ void MyListModel::chargeCategory(QString curentName, int curent, int child,int p
         item->setData(imgPath,USER_IMGPATH);
         invisibleRootItem()-> appendRow(item);
 
-
     }
 
     sort(0);
-invisibleRootItem()->sortChildren(0);
+    invisibleRootItem()->sortChildren(0);
 }
 
 void MyListModel::chargeFavoritedAlbum()
 {
-      clear();
+    clear();
 
-     QStringList list=Setting::favoretedAlbum();
+    QStringList list=Setting::favoretedAlbum();
 
-     foreach(QString title,list)
-     {
+    foreach(QString title,list)
+    {
 
 
-         if(title.isEmpty()||title.isNull())
-             continue;
+        if(title.isEmpty()||title.isNull())
+            continue;
 
-         QStandardItem* item = new QStandardItem();
-         item->setText(title);
-         item->setData(title,USER_TITLE);
-        item->setData(CAT_ALBUM,USER_ID);
-         item->setData(CAT_NULL,USER_CHILD_ID);
-           item->setData(true,USER_FAVORITE);
+        QStandardItem* item = new QStandardItem();
+        item->setText(title);
+        item->setData(title,USER_TITLE);
+        item->setData(COL_I_ALBUM,USER_ID);
+        item->setData(COL_I_NULL,USER_CHILD_ID);
+        item->setData(true,USER_FAVO_DISPLY);
         // item->setData(title,USER_PARENT_NAME);
-          //! ----------------------* IDITOR *---------------------------//
-         item->setData(QVariant::fromValue(Iditoring()),Qt::EditRole);
+        //! ----------------------* IDITOR *---------------------------//
+       item->setData(QVariant::fromValue(Iditoring()),Qt::EditRole);
 
-         bool favo=Setting::albumIsFavorited(title);
-         QString imgPath=Setting::albumImgPath(title);
-         //  QString imgPath=s.value(title).toString();
-         item->setData(favo,USER_RATED);
-         item->setData(imgPath,USER_IMGPATH);
-         invisibleRootItem()-> appendRow(item);
+        bool favo=Setting::albumIsFavorited(title);
+        QString imgPath=Setting::albumImgPath(title);
+        //  QString imgPath=s.value(title).toString();
+        item->setData(favo,USER_RATED);
+        item->setData(imgPath,USER_IMGPATH);
+        invisibleRootItem()-> appendRow(item);
 
 
-     }
+    }
 
-     sort(0);
- invisibleRootItem()->sortChildren(0);
+    sort(0);
+    invisibleRootItem()->sortChildren(0);
 
 }
-
 
 //______________________________________________________________________________________________________CHILDRENS
 void MyListModel::chargeAudios(QString name, int colm,
@@ -142,35 +160,36 @@ void MyListModel::chargeAudios(QString name, int colm,
 
         QVariantMap map=list.at(i);
 
-        // 0
+        // 0  HIDER_ADD
         QStandardItem* itemAdd = new QStandardItem();
         itemAdd->setEditable(false);
         itemAdd->setData(tr("Add curent to playlist"),USER_TITLE);
         itemAdd->setIcon(Tumb::icon(I_ADD)/*QIcon(":/icons/play")*/);
 
-        // 1
+        // 1 HIDER_FAVO
         QStandardItem* itemFavo = new QStandardItem();
-        int favo=map.value(COLM_RATED).toInt();
+        int favo=map.value(COL_S_RATED).toInt();
         itemFavo->setIcon(!favo ? Tumb::icon(I_START):Tumb::icon(I_STARTED));
         itemFavo->setData(tr("Add curent to fvorite"),USER_TITLE);
         itemFavo->setData(favo,USER_RATED);
         itemFavo->setEditable(false);
 
-        // 2
-        QStandardItem* itemTitle = new QStandardItem(map.value(COLM_TITLE).toString());
-        itemTitle->setData(map.value(COLM_PATH),Qt::UserRole);
+        // 2 HIDER_TITLE
+        QStandardItem* itemTitle = new QStandardItem(map.value(COL_S_TITLE).toString());
+        itemTitle->setData(map.value(COL_S_PATH),Qt::UserRole);
         //item->setIcon(Tumb::icon(I_Album));
         itemTitle->setEditable(false);
 
-        // 3
-        QStandardItem* itemArt = new QStandardItem(map.value(COLM_ARTIST).toString());
+        // 3  HIDER_ARTIST
+        QStandardItem* itemArt = new QStandardItem(map.value(COL_S_ARTIST).toString());
         itemArt->setEditable(false);
 
-        // 4
-        QStandardItem* itemAlb = new QStandardItem(map.value(COLM_ALBUM).toString());
+        // 4  HIDER_ALBUM
+        QStandardItem* itemAlb = new QStandardItem(map.value(COL_S_ALBUM).toString());
         itemAlb->setEditable(false);
 
-        QStandardItem* itemDur = new QStandardItem(map.value(COLM_DURATION).toString());
+        // 5  HIDER_TIME
+        QStandardItem* itemDur = new QStandardItem(map.value(COL_S_DURATION).toString());
         itemDur->setEditable(false);
 
         invisibleRootItem()->appendRow(QList<QStandardItem*>()
@@ -182,10 +201,67 @@ void MyListModel::chargeAudios(QString name, int colm,
                                        <<itemDur
                                        );
     }
-    sort(0);
-    invisibleRootItem()->sortChildren(0);
+     invisibleRootItem()->sortChildren(HIDER_TITLE);
+    sort(HIDER_TITLE);
+
 
 }
 
+void MyListModel::searchAudios(int col ,const QString &text)
+{
 
+    clear();
+
+    QList<QVariantMap> list=DataBase::searchAudios(col,text);
+
+    int count=list.count();
+    for (int i = 0; i < count; ++i) {
+
+        QVariantMap map=list.at(i);
+
+        // 0  HIDER_ADD
+        QStandardItem* itemAdd = new QStandardItem();
+        itemAdd->setEditable(false);
+        itemAdd->setData(tr("Add curent to playlist"),USER_TITLE);
+        itemAdd->setIcon(Tumb::icon(I_ADD)/*QIcon(":/icons/play")*/);
+
+        // 1 HIDER_FAVO
+        QStandardItem* itemFavo = new QStandardItem();
+        int favo=map.value(COL_S_RATED).toInt();
+        itemFavo->setIcon(!favo ? Tumb::icon(I_START):Tumb::icon(I_STARTED));
+        itemFavo->setData(tr("Add curent to fvorite"),USER_TITLE);
+        itemFavo->setData(favo,USER_RATED);
+        itemFavo->setEditable(false);
+
+        // 2 HIDER_TITLE
+        QStandardItem* itemTitle = new QStandardItem(map.value(COL_S_TITLE).toString());
+        itemTitle->setData(map.value(COL_S_PATH),Qt::UserRole);
+        //item->setIcon(Tumb::icon(I_Album));
+        itemTitle->setEditable(false);
+
+        // 3  HIDER_ARTIST
+        QStandardItem* itemArt = new QStandardItem(map.value(COL_S_ARTIST).toString());
+        itemArt->setEditable(false);
+
+        // 4  HIDER_ALBUM
+        QStandardItem* itemAlb = new QStandardItem(map.value(COL_S_ALBUM).toString());
+        itemAlb->setEditable(false);
+
+        // 5  HIDER_TIME
+        QStandardItem* itemDur = new QStandardItem(map.value(COL_S_DURATION).toString());
+        itemDur->setEditable(false);
+
+        invisibleRootItem()->appendRow(QList<QStandardItem*>()
+                                       <<itemAdd
+                                       <<itemFavo
+                                       <<itemTitle
+                                       <<itemArt
+                                       <<itemAlb
+                                       <<itemDur
+                                       );
+    }
+     invisibleRootItem()->sortChildren(HIDER_TITLE);
+    sort(HIDER_TITLE);
+
+}
 

@@ -1,3 +1,24 @@
+/***************************************************************************
+ *      Project created by QtCreator 2018-06-01T17:15:24                   *
+ *                                                                         *
+ *    goldfinch Copyright (C) 2014 AbouZakaria <yahiaui@gmail.com>         *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -16,6 +37,8 @@
 #include "setting.h"
 #include "widgetplaylist.h"
 #include "widgetimageinfo.h"
+#include "searchbar.h"
+#include <QSystemTrayIcon>
 namespace Ui {
 class MainWindow;
 }
@@ -28,6 +51,7 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
      Player *player(){return mPlayer;}
+     void setUrl(const QString &file);
 signals:
     void iconsChanged();
 
@@ -37,6 +61,8 @@ private:
     void changeEvent(QEvent *event);
     //!
     void changeStyleSheet();
+
+    void creatTrayIcon();
     //!
     QMap<QString,QString>mMap;
     //! موديول قائمة النفاصبل
@@ -65,6 +91,8 @@ private:
     WidgetImageInfo *mImageInfo;
     //! تحديث المقطوعات من الجهاز
     MediaUpdate *mMediaUpdate;
+
+    SearchBar *mSearchBar;
     //!
     Setting *mSetting;
     //!
@@ -75,8 +103,13 @@ private:
     int mIconSize=94;
     //!
     QString mcoloor;
+    //!
+    QSystemTrayIcon *trayIcon=nullptr;
+
 
 private slots:
+    //!
+    void showRaise(){showNormal();raise();}
     //!
     void switchViewMode(bool mini);
     //!
@@ -92,21 +125,21 @@ private slots:
     //! عرض مسار الالبومات
     void changeStatusPathText();
     //! تغيير مسار الالبومات
-    void setPathAlbum(int index);
-    //! اضاغة مسارات جديدة لتحميل الالبومات
-    //!
+    void setAlbumPath(int index);
+     //!
     void setIconSize(int value);
     //!
-    void setwTitle(const QString &title){setWindowTitle(title);}
+    void setwTitle(const QString &title, const QString &info);
     //!
     void chargeListItemes();
+    //!
+    void searchAudios(int col,const QString &text);
+    //!
     void setlabelImage();
     //!
-    void on_actionaddDir_triggered();
+    void onTreeViewContentActivated(const QModelIndex &index);
     //!
-    void treeViewContentActivated(const QModelIndex &index);
-    //!
-    void listViewActivated(const QModelIndex &index);
+    void onListViewActivated(const QModelIndex &index);
     //!
     void on_tb_paneContent_toggled(bool checked);
     //!
@@ -131,17 +164,18 @@ private slots:
     //!
     void on_tb_favoritAlbum_clicked();
     //!
-    void treeAudioClicked(const QModelIndex &index);
+    void onTreeAudioClicked(const QModelIndex &index);
     //!
-    void treeAudioActivated(const QModelIndex &index);
+    void onTreeAudioActivated(const QModelIndex &index);
     //!
-    void editCurIndex(const QString &path);
+   // void editCurIndex(const QString &path);
     //!
-    void on_actionopen_triggered();
+    void onActionopentriggered();
 
 
     void on_tButtonCancelMsg_clicked();
     void on_tButtonOkMsg_clicked();
+    void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
 };
 
 #endif // MAINWINDOW_H

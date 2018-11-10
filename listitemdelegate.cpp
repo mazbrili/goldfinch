@@ -1,3 +1,24 @@
+/***************************************************************************
+ *      Project created by QtCreator 2018-06-01T17:15:24                   *
+ *                                                                         *
+ *    goldfinch Copyright (C) 2014 AbouZakaria <yahiaui@gmail.com>         *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "listitemdelegate.h"
 #include "tumb.h"
 #include "listeditor.h"
@@ -6,7 +27,7 @@
 #include<QFile>
 #include<QImageReader>
 
-#include<QDebug>
+//#include<QDebug>
 #include<QDir>
 ListItemDelegate::ListItemDelegate()
 {
@@ -45,10 +66,10 @@ QIcon decoration(const QModelIndex &index){
     int col=index.data(USER_ID).toInt();
     QString title=index.data(USER_TITLE).toString();
 
-    if(col==CAT_ALBUM/*||col==CAT_ALBUMRATED*/){
+    if(col==COL_I_ALBUM/*||col==CAT_ALBUMRATED*/){
         QString imgPath=index.data(USER_IMGPATH).toString();
         return  Tumb::iconAlbum(title,imgPath);
-    }else if(col==CAT_ARTIST){
+    }else if(col==COL_I_ARTIST){
         return (Tumb::iconnArtist(title));
     }
     return (Tumb::iconnArtist(title));
@@ -90,7 +111,7 @@ void ListItemDelegate::paintIconView(QPainter *painter, const QStyleOptionViewIt
 
     QRect rectborder=option.rect;
 
-    if(id==CAT_ALBUM){
+    if(id==COL_I_ALBUM){
         rectborder.adjust(0,0,-1,-1);
         painter->setOpacity(0.3);
         painter->setPen(option.palette.highlight().color());

@@ -1,7 +1,28 @@
+/***************************************************************************
+ *      Project created by QtCreator 2018-06-01T17:15:24                   *
+ *                                                                         *
+ *    goldfinch Copyright (C) 2014 AbouZakaria <yahiaui@gmail.com>         *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "tumb.h"
 #include <QImageReader>
 #include <QDir>
-#include <QDebug>
+//#include <QDebug>
 #include <QPainter>
 #include <QApplication>
 #include <QBitmap>
@@ -199,6 +220,11 @@ QIcon Tumb::icon(int name)
     case I_FAVO:       return iconColorized(":/icons/favo",color);
     case I_MENU:       return iconColorized(":/icons/menu",color);
     case I_PROPERTIES: return iconColorized(":/icons/properties",color);
+    case I_OPTIONS: return iconColorized(":/icons/properties",QApplication::palette().highlight().color());
+    case I_QUIT: return iconColorized(":/icons/window-close",color);
+    case I_Close: return iconColorized(":/icons/window-close",QApplication::palette().highlight().color());
+    case I_FIND: return iconColorized(":/icons/find-16",color);
+    case I_ALBUM_SMALL: return iconColorized(":/icons/cover-album",color);
     case I_PANE_HIDE:
         if(isLeft)     return iconColorized(":/icons/pane-hide",color);
         else           return iconColorized(":/icons/pane-show",color);
@@ -214,6 +240,9 @@ QIcon Tumb::icon(int name)
     case I_PREV:
         if(isLeft)     return iconColorized(":/icons/prev",color);
         else           return iconColorized(":/icons/next",color);
+    case I_CLEAR:
+        if(isLeft)     return iconColorized(":/icons/edit-clear",QApplication::palette().highlight().color());
+        else           return iconColorized(":/icons/edit-clear-rtl",QApplication::palette().highlight().color());
 
     default:  break;
     }
