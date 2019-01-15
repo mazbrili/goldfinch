@@ -22,17 +22,17 @@
 #include "setting.h"
 #include "defines.h"
 #include <QDir>
-Setting::Setting(QObject *parent ):
-    QSettings(D_CACHE+"/albums",QSettings::IniFormat, parent)
+#include <QDebug>
+#include <QUrl>
+Setting::Setting(QObject *parent ):QSettings(parent)
 {
-
-
 }
 
 void Setting::setAlbumFavo(const QString &title,bool favo)
 {
 
-    QSettings s(D_CACHE+"/albums",QSettings::IniFormat);
+    //QSettings s(CACHE+"/albums",QSettings::IniFormat);
+    QSettings s(APP_NAME,"albums");
     s.beginGroup("Favorite");
 
     if(favo)
@@ -47,7 +47,8 @@ void Setting::setAlbumFavo(const QString &title,bool favo)
 
 bool Setting::albumIsFavorited(const QString &title)
 {
-    QSettings s(D_CACHE+"/albums",QSettings::IniFormat);
+  //  QSettings s(CACHE+"/",QSettings::IniFormat);
+    QSettings s(APP_NAME,"albums");
     s.beginGroup("Favorite");
     bool favo=s.value(title,0).toBool();
     s.endGroup();
@@ -56,7 +57,8 @@ bool Setting::albumIsFavorited(const QString &title)
 
 QStringList  Setting::favoretedAlbum()
 {
-    QSettings s(D_CACHE+"/albums",QSettings::IniFormat);
+  //  QSettings s(CACHE+"/albums",QSettings::IniFormat);
+        QSettings s(APP_NAME,"albums");
     QStringList list;
     s.beginGroup("Favorite");
     list= s.allKeys();
@@ -66,7 +68,45 @@ QStringList  Setting::favoretedAlbum()
 
 QString Setting::albumImgPath(const QString &title)
 {
-    QSettings s(D_CACHE+"/albums",QSettings::IniFormat);
+  QSettings s(CACHE+"/albums",QSettings::IniFormat);
+s.setIniCodec("UTF_8");
+     //   qDebug()<<"albumImgPath"<<title<<s.value(title).toString().replace("%"," ");
+
     return s.value(title).toString();
 
 }
+
+void Setting::setAlbumImgPath(const QString &album,const QFileInfo &file)
+   {
+    QSettings s(CACHE+"/albums",QSettings::IniFormat);
+    s.setIniCodec("UTF_8");
+
+    s.setValue( album,file.absolutePath());
+   }
+
+
+ void  Setting::saveRecent(QVariantMap map, int index)
+ {
+     QSettings settings;
+     settings.beginGroup("Recent");
+
+     settings.setValue("Index", index);
+     settings.setValue("Map",  map);
+
+     settings.endGroup();
+ }
+
+   QVariantMap  Setting:: getRecentMap()
+   {
+       QSettings settings;
+       settings.beginGroup("Recent");
+       return  settings.value("Map").toMap();
+
+   }
+    int  Setting:: getRecentndex()
+    {
+        QSettings settings;
+        settings.beginGroup("Recent");
+        return  settings.value("Index").toInt();
+
+    }

@@ -48,6 +48,16 @@ private slots:
 
     void on_checkBoxRemove_toggled(bool checked);
 
+    void on_comboBoxStyls_activated(const QString &arg1);
+
+    void on_checkBoxNotify_toggled(bool checked);
+
+    void on_checkBoxTrayIcon_toggled(bool checked);
+
+    void on_comboBoxLanguage_activated(const QString &arg1);
+
+    void on_checkBoxShowMenu_toggled(bool checked);
+
 private:
     Ui::DialogOptions *ui;
 };

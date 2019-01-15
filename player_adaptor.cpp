@@ -36,24 +36,21 @@ MainAdaptor::~MainAdaptor()
 }
 
 void MainAdaptor:: Quit()
-{  QMetaObject::invokeMethod(parent()->parent()->parent()->parent(), "close"); }
+{  QMetaObject::invokeMethod(parent(), "appQuit"); }
 
 void MainAdaptor:: Raise()
-{  QMetaObject::invokeMethod(parent()->parent()->parent()->parent(), "showRaise"); }
+{  QMetaObject::invokeMethod(parent(), "showRaise"); }
 
- void MainAdaptor:: SetUrl(const QString &url)
- {
-     qDebug()<<"Adaptor:: setUrl"<<url;
-  //   QUrl urlm=QUrl::fromLocalFile(url);
-  QMetaObject::invokeMethod(parent(), "setFile", Q_ARG(QString, url));
- // QMetaObject::invokeMethod(parent(), "playLast");
- }
+void MainAdaptor:: Hide()
+{  QMetaObject::invokeMethod(parent(), "appHide"); }
+
 //----------------------------------------------------------PlayerAdaptor
 PlayerAdaptor::PlayerAdaptor(QObject *parent)
     : QDBusAbstractAdaptor(parent)
 {
     // constructor
     setAutoRelaySignals(true);
+    connect(this,&PlayerAdaptor::Seeked,this,&PlayerAdaptor::Seek);
 }
 
 PlayerAdaptor::~PlayerAdaptor()
@@ -64,8 +61,17 @@ PlayerAdaptor::~PlayerAdaptor()
 
 //--------------------------- METHODS ---------------------------
 
-void PlayerAdaptor::Seek(int Offset)
-{  QMetaObject::invokeMethod(parent(), "seek", Q_ARG(int, Offset));}
+void PlayerAdaptor::Seek(qlonglong Offset)
+{
+    qDebug()<<"PlayerAdaptor::Seek==========================="<<Offset;
+    QMetaObject::invokeMethod(parent(), "seek", Q_ARG(qlonglong, Offset));}
+
+void PlayerAdaptor::SetPosition(const QDBusObjectPath &TrackId, qlonglong Position)
+{
+     qDebug()<<"PlayerAdaptor::SetPosition========================"<<Position<<&TrackId;
+    Q_UNUSED(TrackId);
+      QMetaObject::invokeMethod(parent(), "seek", Q_ARG(qlonglong, Position));
+}
 
 void PlayerAdaptor::Play()
 {  QMetaObject::invokeMethod(parent(), "play");     }
@@ -148,9 +154,10 @@ qint64 PlayerAdaptor::Position()
 void PlayerAdaptor::setPos(qint64 p)
 {
     QVariantMap changedProps;
-    changedProps.insert("Position", p);
+    changedProps.insert("Position", p*1000);
     propertiesChanged(changedProps);
 }
+
 
 QVariantMap  PlayerAdaptor::Metadata()
 {
@@ -173,7 +180,46 @@ void PlayerAdaptor::propertiesChanged(QVariantMap changedProps)
     signal << QStringList();
 
     if (QDBusConnection::sessionBus().send(signal))
-        qDebug()<<"emited"<<signal.arguments();
+        qDebug()<<"PlayerAdaptor::propertiesChanged :signal emited"/*<<changedProps*/;
     else
-        qDebug()<<"No Emited"<<signal.arguments();
+        qDebug()<<"PlayerAdaptor::propertiesChanged :signal No Emited";
 }
+
+ void PlayerAdaptor:: SetUrl(const QString &url)
+ {
+     qDebug()<<"Adaptor:: setUrl"<<url;
+  //   QUrl urlm=QUrl::fromLocalFile(url);
+  QMetaObject::invokeMethod(parent(), "setFile", Q_ARG(QString, url));
+ // QMetaObject::invokeMethod(parent(), "playLast");
+ }
+
+ bool PlayerAdaptor::Notify(const QString &app_name, const QString &app_icon,
+                    const QString &summary, const QString &body,
+                        int expire_timeout)
+ {
+     QDBusConnection connection = QDBusConnection::sessionBus();
+
+      if ( connection.registerService("org.freedesktop.Notifications"))
+      {
+          connection.unregisterService("org.freedesktop.Notifications");
+          return  false;
+      }
+     QDBusInterface kdbus("org.freedesktop.Notifications",
+                         "/org/freedesktop/Notifications",
+                         "org.freedesktop.Notifications");
+
+     if (!kdbus.isValid()) {  return false; }
+
+     QList<QVariant> args;
+     args.append(app_name);       // Application Name
+     args.append(0123U);         // Replaces ID (0U)
+     args.append(app_icon);     // Notification Icon
+     args.append( summary);       // Summary
+     args.append(body);          // Body
+     args.append(QStringList()); // Actions
+     args.append(QVariantMap());
+     args.append(expire_timeout);
+     kdbus.callWithArgumentList(QDBus::AutoDetect, "Notify", args);
+
+     return  true;
+ }

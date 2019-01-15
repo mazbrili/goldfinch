@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
  *      Project created by QtCreator 2018-06-01T17:15:24                   *
  *                                                                         *
  *    goldfinch Copyright (C) 2014 AbouZakaria <yahiaui@gmail.com>         *
@@ -61,9 +61,9 @@ QString outTxt(QString txt){  return txt.trimmed().replace("$","'");}
 void DataBase::openDataBase()
 {
     QDir dir;
-    dir.mkpath(D_CACHE);
+    dir.mkpath(CACHE);
 
-   instance()-> db.setDatabaseName(D_CACHE+"/library.db");
+   instance()-> db.setDatabaseName(CACHE+"/library.db");
 
     QString txt="no database: ";
     if(! instance()-> db.open())
@@ -89,21 +89,29 @@ void DataBase::openDataBase()
                "'modified' TEXT"
                ");");
 
- query.exec("CREATE UNIQUE INDEX `idx` ON `books` ( `path`	ASC)");
+     query.exec("CREATE UNIQUE INDEX `idx` ON `books` ( `path`	ASC)");
 
-
+     query.exec("CREATE TABLE 'main'.'albums' ("
+                "'title'  PRIMARY KEY  NOT NULL,"
+                "'path' TEXT"
+                ");");
     //  query.exec("CREATE UNIQUE INDEX `index_nom` ON `table` (`colonne1`)");
 }
+
 bool  DataBase::clearDatabase()
 {
      QSqlQuery query(instance()->db);
     QString  txt="DROP TABLE books";
+     QString  txt2="DROP TABLE albums";
     if(query.exec(txt)){
+        query.exec(txt2);
         openDataBase();
         return true;
     } else{
         qDebug()<<"DataBase::clearDatabase::"<<query.lastError().text();
     }
+
+
     return false;
 }
 
@@ -172,7 +180,7 @@ int  DataBase::checkSongInfo( const QString &path)
 
     while(query.next())
     {
-        qDebug()<<"data"<<query.value(1).toString()<<query.value(0).toString();
+        qDebug()<<"DataBase::checkSongInfo"<<query.value(1).toString()<<query.value(0).toString();
         if(lastModified!=query.value(1).toString())
             return DATA_NEEDUPDATE;
 
@@ -191,7 +199,7 @@ bool DataBase::removeSong(const QString &path)
     if(query.exec(text))
         return true;
     else
-        qDebug()<<query.lastError().text();
+        qDebug()<<"DataBase::removeSong"<<query.lastError().text();
     return false;
 }
 //_____________________________________________________________________
@@ -248,6 +256,44 @@ void  DataBase::addNewSong(const QString &title,   const QString &artist,
         qDebug()<< query.lastError().text();
     }
 }
+
+ void  DataBase::addNewAlbumImgPath(const QString &title,const QString &path)
+ {
+     QSqlQuery query(instance()->db);
+     QString txt=QString("insert into albums values('%1','%2')")
+             .arg(inTxt(title))
+             .arg(inTxt(path))
+             ;
+
+
+
+     if(query.exec(txt)){
+         // qDebug()<<"add new song"<<title<<artist<<album<<genre<<path<<duration<<favo<<tags;
+     }else{
+         QString txt=QString("UPDATE albums "
+                             " SET %1 ='%2' "
+                             " WHERE title='%3' ")
+                 .arg(COL_S_PATH).arg(inTxt(path)).arg(inTxt(title));
+         query.exec(txt);
+         qDebug()<<"addNewAlbumImgPath"<< txt;
+         qDebug()<<"addNewAlbumImgPath"<< query.lastError().text();
+     }
+
+ }
+
+ QString  DataBase::getAlbumImgPath(const QString &title)
+ {
+     QString   txt=QString("select path from albums WHERE title='%1'")
+             .arg(inTxt(title));
+     QSqlQuery query(instance()->db);
+     query.exec(txt);
+     while(query.next())
+     {
+         QString txt=outTxt(query.value(0).toString());
+         return txt;
+     }
+     return QString();
+ }
 
 bool DataBase::updateSong(const QString &title,   const QString &artist,
                           const QString &album,   const QString &genre,
@@ -438,7 +484,7 @@ QList<QVariantMap> DataBase::chargeAudios(QString name,
         map[COL_S_DURATION]  =query.value(COL_I_DURATION).toString();
         map[COL_S_RATED] =query.value(COL_I_RATED).toString();
         //map[COLM_TIME]  =query.value(CAT_TIME).toString();
-        qDebug()<<query.value(COL_I_TITLE).toString()<<query.value(COL_I_DURATION).toString();
+       // qDebug()<<query.value(COL_I_TITLE).toString()<<query.value(COL_I_DURATION).toString();
         list.append(map);
 
     }
@@ -449,13 +495,16 @@ QList<QVariantMap> DataBase::chargeAudios(QString name,
  QList<QVariantMap> DataBase::searchAudios(int col ,const QString &text)
 {
     QString colm_s=colString(col);
-    qDebug()<<col<<colm_s<<text;
+ //   qDebug()<<col<<colm_s<<text;
     QString  txt=QString("select * from books WHERE %1 LIKE '%%2%'" )
             .arg(colm_s,text);
-qDebug()<<txt;
+//qDebug()<<txt;
     QSqlQuery query(instance()->db);
-    query.exec(txt);
-    //   qDebug()<< "QSqlQuery Audio:"<<txt;
+    if(query.exec(txt))
+     qDebug()<< "QSqlQuery Audio:"<<txt;
+    else
+         qDebug()<< "QSqlQuery Audio:"<<query.lastError().text();
+
     QList<QVariantMap> list;
     QVariantMap map;
     while(query.next())
@@ -476,7 +525,7 @@ qDebug()<<txt;
         map[COL_S_DURATION]  =query.value(COL_I_DURATION).toString();
         map[COL_S_RATED] =query.value(COL_I_RATED).toString();
         //map[COLM_TIME]  =query.value(CAT_TIME).toString();
-        qDebug()<<query.value(COL_I_TITLE).toString()<<query.value(COL_I_DURATION).toString();
+     //   qDebug()<<query.value(COL_I_TITLE).toString()<<query.value(COL_I_DURATION).toString();
         list.append(map);
 
     }
@@ -537,3 +586,27 @@ QList<QVariantMap> DataBase::getAlbumUrls(QString name,
     return list;
 }
 
+
+ QVariantMap DataBase::filePropery(const QString & file)
+ {
+
+     QVariantMap map;
+
+     QString   txt=QString("select * from books WHERE path='%1'")
+             .arg(inTxt(file));
+     QSqlQuery query(instance()->db);
+     query.exec(txt);
+
+     while(query.next())
+     {
+         map[COL_S_TITLE] =query.value(COL_I_TITLE).toString().replace("$","'");
+         map[COL_S_ARTIST]=query.value(COL_I_ARTIST).toString().replace("$","'");
+         map[COL_S_ALBUM] =query.value(COL_I_ALBUM).toString().replace("$","'");
+         map[COL_S_GENRE] =query.value(COL_I_GENRE).toString().replace("$","'");
+         map[COL_S_PATH]  =query.value(COL_I_PATH).toString().replace("$","'");
+         map[COL_S_DURATION]  =query.value(COL_I_DURATION).toString();
+
+     }
+
+     return map;
+ }

@@ -2,6 +2,207 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ar_DZ">
 <context>
+    <name>ACtions</name>
+    <message>
+        <location filename="../../../../../actions.cpp" line="16"/>
+        <source>Play</source>
+        <translation>تشغيل</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="18"/>
+        <source>Play 
+</source>
+        <translation>تشغيل 
+</translation>
+    </message>
+    <message>
+        <source>PlayPause</source>
+        <translation type="vanished">لبث</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="21"/>
+        <source>Play/Pause</source>
+        <translation>شغل/البث</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="23"/>
+        <source>Play/Pause 
+</source>
+        <translation>شغل/البث 
+</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="26"/>
+        <source>Pause</source>
+        <translation>البث</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="28"/>
+        <location filename="../../../../../actions.cpp" line="38"/>
+        <source>Next Song 
+</source>
+        <translation>الصوت التالي 
+</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="31"/>
+        <source>Stop</source>
+        <translatorcomment>توقف</translatorcomment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="33"/>
+        <source>Stop 
+</source>
+        <translatorcomment>توقف 
+</translatorcomment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="36"/>
+        <source>Next</source>
+        <translation>التالي</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="41"/>
+        <source>previous</source>
+        <translation>السابق</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="43"/>
+        <source>Previous Song 
+</source>
+        <translation>الصوت السابق 
+</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="48"/>
+        <source>Increase volume</source>
+        <translation>زيادة حجم الصوت</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="52"/>
+        <source>Decrease volume</source>
+        <translation>انقاص حجم الصوت</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="56"/>
+        <source>Mute/Unmute</source>
+        <translation>كتم/الغاء الكتم</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="61"/>
+        <source>Volume</source>
+        <translatorcomment>الصوت</translatorcomment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="66"/>
+        <source>Open Files</source>
+        <translation>فتح ملفات</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="70"/>
+        <source>Open Urls</source>
+        <translation>فتح موقع</translation>
+    </message>
+    <message>
+        <source>Add/Update Directory</source>
+        <translation type="vanished">اضافة/تحديث مجلدات</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="73"/>
+        <source>Settings</source>
+        <translation>الإعدادات</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="77"/>
+        <source>Mini player</source>
+        <translation>القارئ المصغر</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="82"/>
+        <source>Quit</source>
+        <translation>خروج</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="86"/>
+        <source>Update All</source>
+        <translation>تحديث الكل</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="90"/>
+        <source>Search</source>
+        <translation>بحث</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="95"/>
+        <source>PlayBack Mode</source>
+        <translation>حالة التشغيل</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="97"/>
+        <source>Current Once</source>
+        <translation>الحالية مرة واحدة</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="101"/>
+        <source>Current Loop</source>
+        <translation>تكرار الحالية</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="105"/>
+        <source>Sequential</source>
+        <translation>متتالية</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="109"/>
+        <source>Plylist Loop</source>
+        <translation>تكرار القائمة</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="113"/>
+        <source>Random</source>
+        <translation>عشوائي</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="117"/>
+        <source>Remove</source>
+        <translation>حذف</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="118"/>
+        <source>Remove Current </source>
+        <translation>حذف المحدد </translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="121"/>
+        <location filename="../../../../../actions.cpp" line="122"/>
+        <source>Clear PlayList</source>
+        <translation>مسح االقائمة</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="140"/>
+        <source>Help</source>
+        <translation>مساعدة</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="142"/>
+        <source>About</source>
+        <translation>حول</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="144"/>
+        <source>About Qt</source>
+        <translation>حول كيوتي</translation>
+    </message>
+    <message>
+        <location filename="../../../../../actions.cpp" line="195"/>
+        <source>About...Goldfinch</source>
+        <translation>حول...الحسون</translation>
+    </message>
+</context>
+<context>
     <name>DialogOpen</name>
     <message>
         <location filename="../../../../../dialogopen.ui" line="14"/>
@@ -23,50 +224,105 @@
 <context>
     <name>DialogOptions</name>
     <message>
-        <location filename="../../../../../dialogoptions.ui" line="14"/>
         <source>Options</source>
-        <translation>خيارات</translation>
+        <translation type="vanished">خيارات</translation>
     </message>
     <message>
-        <location filename="../../../../../dialogoptions.ui" line="20"/>
+        <location filename="../../../../../dialogoptions.ui" line="14"/>
+        <source>Settings</source>
+        <translation>الإعدادات</translation>
+    </message>
+    <message>
+        <location filename="../../../../../dialogoptions.ui" line="24"/>
+        <source>Directories</source>
+        <translation>المسارات</translation>
+    </message>
+    <message>
+        <location filename="../../../../../dialogoptions.ui" line="30"/>
         <source>Select any directory for adding to librery or updating .</source>
         <translation>حدد اي مجلد لاضافته للمكتبة او تحديثه.</translation>
     </message>
     <message>
-        <location filename="../../../../../dialogoptions.ui" line="32"/>
+        <location filename="../../../../../dialogoptions.ui" line="49"/>
         <source>Add new directory</source>
         <translation>اضافة مجلد جديد</translation>
     </message>
     <message>
-        <location filename="../../../../../dialogoptions.ui" line="35"/>
-        <location filename="../../../../../dialogoptions.ui" line="49"/>
+        <location filename="../../../../../dialogoptions.ui" line="52"/>
+        <location filename="../../../../../dialogoptions.ui" line="66"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../../../dialogoptions.ui" line="46"/>
+        <location filename="../../../../../dialogoptions.ui" line="63"/>
         <source>Remove Selected</source>
         <translation>حذف المحدد</translation>
     </message>
     <message>
-        <location filename="../../../../../dialogoptions.ui" line="78"/>
+        <location filename="../../../../../dialogoptions.ui" line="96"/>
+        <source>General</source>
+        <translation>عام</translation>
+    </message>
+    <message>
+        <location filename="../../../../../dialogoptions.ui" line="102"/>
+        <source>If the value is default, the style will be changed only when the program is restarted</source>
+        <translation>اذا كانت القيمة الافتراضية لن يتم تغيير السمة الا عند اعادة تشغيل البرنامج</translation>
+    </message>
+    <message>
+        <location filename="../../../../../dialogoptions.ui" line="118"/>
+        <source>Style:</source>
+        <translation>السمة:</translation>
+    </message>
+    <message>
+        <location filename="../../../../../dialogoptions.ui" line="128"/>
+        <source>Language:</source>
+        <translation>اللغة:</translation>
+    </message>
+    <message>
+        <location filename="../../../../../dialogoptions.ui" line="138"/>
+        <source>Show notifications when the window is hidden or minimized</source>
+        <translation>اعرض الاختصارات عندما تكون النافذة مخغية او مصغرة</translation>
+    </message>
+    <message>
+        <location filename="../../../../../dialogoptions.ui" line="158"/>
+        <source>Show in tray icon</source>
+        <translation>اظهار في صينية النظام</translation>
+    </message>
+    <message>
+        <location filename="../../../../../dialogoptions.ui" line="40"/>
         <source>Delete all previous data</source>
         <translation>حذف كل البيانات السابقة من المكتبة</translation>
     </message>
     <message>
-        <location filename="../../../../../dialogoptions.cpp" line="70"/>
+        <location filename="../../../../../dialogoptions.cpp" line="42"/>
+        <location filename="../../../../../dialogoptions.cpp" line="51"/>
+        <source>Default</source>
+        <translation>الافتراضي</translation>
+    </message>
+    <message>
+        <location filename="../../../../../dialogoptions.cpp" line="115"/>
         <source>Open Directory</source>
         <translation>فتح مجلد</translation>
     </message>
     <message>
-        <location filename="../../../../../dialogoptions.cpp" line="122"/>
+        <location filename="../../../../../dialogoptions.cpp" line="165"/>
         <source>Warning</source>
         <translation>تحذير</translation>
     </message>
     <message>
-        <location filename="../../../../../dialogoptions.cpp" line="122"/>
+        <location filename="../../../../../dialogoptions.cpp" line="165"/>
         <source>This process will delete all your data and previous edits</source>
         <translation>هذا الخيار سيقوم بحذف كل البيانات وكل تعديلاتك السابقة</translation>
+    </message>
+    <message>
+        <location filename="../../../../../dialogoptions.cpp" line="205"/>
+        <source>Information</source>
+        <translation>معلومات</translation>
+    </message>
+    <message>
+        <location filename="../../../../../dialogoptions.cpp" line="205"/>
+        <source>the language %1  will be changed only when the program is restarted</source>
+        <translation>اللغة %1  سيتم تغييرها عند اعادة تشغيل البرنامج</translation>
     </message>
 </context>
 <context>
@@ -149,101 +405,111 @@
         <translation>عرض / اخفاء قائمة التشغيل</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.ui" line="535"/>
+        <location filename="../../../../../mainwindow.ui" line="523"/>
         <source>Add curent Album</source>
         <translation>إضافة الالبوم الحالي</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.ui" line="549"/>
+        <location filename="../../../../../mainwindow.ui" line="537"/>
         <source>Add album to favorit</source>
         <translation>إضافة الالبوم الى المفضلة</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.ui" line="566"/>
+        <location filename="../../../../../mainwindow.ui" line="554"/>
         <source>change cover image</source>
         <translation>تغيير صورة الالبوم</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.ui" line="586"/>
+        <location filename="../../../../../mainwindow.ui" line="574"/>
         <source>play curent album</source>
         <translation>تشغيل الالبوم الحالي</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.cpp" line="66"/>
-        <source>Mini player</source>
-        <translation>القارئ المصغر</translation>
+        <location filename="../../../../../mainwindow.ui" line="636"/>
+        <source>&amp;File</source>
+        <translation>&amp;ملف</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.cpp" line="72"/>
+        <location filename="../../../../../mainwindow.ui" line="641"/>
+        <source>&amp;Edit</source>
+        <translation>&amp;تحرير</translation>
+    </message>
+    <message>
+        <location filename="../../../../../mainwindow.ui" line="646"/>
+        <source>&amp;Help</source>
+        <translation>&amp;مساعدة</translation>
+    </message>
+    <message>
+        <source>Mini player</source>
+        <translation type="vanished">القارئ المصغر</translation>
+    </message>
+    <message>
+        <location filename="../../../../../mainwindow.cpp" line="96"/>
         <source>Search</source>
         <translation>بحث</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.cpp" line="79"/>
         <source>Open Files...</source>
-        <translation>فتح ملفات...</translation>
+        <translation type="vanished">فتح ملفات...</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.cpp" line="80"/>
         <source>Add/Update Directory</source>
-        <translation>اضافة/تحديث مجلدات</translation>
+        <translation type="vanished">اضافة/تحديث مجلدات</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.cpp" line="84"/>
-        <location filename="../../../../../mainwindow.cpp" line="942"/>
         <source>Quit</source>
-        <translation>خروج</translation>
+        <translation type="vanished">خروج</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.cpp" line="793"/>
-        <location filename="../../../../../mainwindow.cpp" line="810"/>
+        <location filename="../../../../../mainwindow.cpp" line="447"/>
+        <location filename="../../../../../mainwindow.cpp" line="448"/>
+        <source>Default</source>
+        <translation>الافتراضي</translation>
+    </message>
+    <message>
+        <location filename="../../../../../mainwindow.cpp" line="840"/>
+        <location filename="../../../../../mainwindow.cpp" line="857"/>
         <source>Unknown</source>
         <translation>مجهول</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.cpp" line="822"/>
+        <location filename="../../../../../mainwindow.cpp" line="869"/>
         <source>Open File</source>
         <translation>فتح ملف</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.cpp" line="937"/>
         <source>Play</source>
-        <translation>تشغيل</translation>
+        <translation type="vanished">تشغيل</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.cpp" line="938"/>
         <source>Pause</source>
-        <translation>البث</translation>
+        <translation type="vanished">البث</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.cpp" line="939"/>
         <source>Next</source>
-        <translation>التالي</translation>
+        <translation type="vanished">التالي</translation>
     </message>
     <message>
-        <location filename="../../../../../mainwindow.cpp" line="940"/>
         <source>Previous</source>
-        <translation>السابق</translation>
+        <translation type="vanished">السابق</translation>
     </message>
 </context>
 <context>
     <name>MediaUpdate</name>
     <message>
-        <location filename="../../../../../mediaupdate.cpp" line="207"/>
-        <location filename="../../../../../mediaupdate.cpp" line="209"/>
         <source>Unknown</source>
-        <translation>مجهول</translation>
+        <translation type="vanished">مجهول</translation>
     </message>
 </context>
 <context>
     <name>MyContentModel</name>
     <message>
-        <location filename="../../../../../mycontentmodel.cpp" line="41"/>
+        <location filename="../../../../../mycontentmodel.cpp" line="42"/>
         <source>Favorite Song</source>
         <translation>الاصوات المفضلة</translation>
     </message>
     <message>
-        <location filename="../../../../../mycontentmodel.cpp" line="50"/>
+        <location filename="../../../../../mycontentmodel.cpp" line="51"/>
         <source>Favorite Albums</source>
         <translation>الالبومات المفضلة</translation>
     </message>
@@ -286,46 +552,47 @@
 <context>
     <name>Player</name>
     <message>
-        <location filename="../../../../../player.cpp" line="117"/>
+        <location filename="../../../../../player.cpp" line="107"/>
         <source>Service not available</source>
-        <translation type="unfinished"></translation>
+        <translation>الخدمة غير متوفرة</translation>
     </message>
     <message>
-        <location filename="../../../../../player.cpp" line="118"/>
+        <location filename="../../../../../player.cpp" line="108"/>
         <source>The QMediaPlayer object does not have a valid service.
 Please check the media service plugins are installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يحتوي كائن QMediaPlayer على خدمة صالحة.
+يرجى التحقق من تثبيت مكونات خدمة الوسائط.</translation>
     </message>
     <message>
-        <location filename="../../../../../player.cpp" line="354"/>
+        <location filename="../../../../../player.cpp" line="342"/>
         <source>Loading...</source>
         <translation>تحميل...</translation>
     </message>
     <message>
-        <location filename="../../../../../player.cpp" line="357"/>
+        <location filename="../../../../../player.cpp" line="343"/>
         <source>Media Stalled</source>
         <translation>الوسيط متوقف</translation>
     </message>
     <message>
-        <location filename="../../../../../player.cpp" line="383"/>
+        <location filename="../../../../../player.cpp" line="364"/>
         <source>Buffering %4%</source>
         <translation>تخزين مؤقت %4%</translation>
     </message>
     <message>
-        <location filename="../../../../../player.cpp" line="425"/>
-        <location filename="../../../../../player.cpp" line="427"/>
+        <location filename="../../../../../player.cpp" line="404"/>
+        <location filename="../../../../../player.cpp" line="406"/>
         <source>Stopped</source>
         <translation>متوقف</translation>
     </message>
     <message>
-        <location filename="../../../../../player.cpp" line="430"/>
-        <location filename="../../../../../player.cpp" line="432"/>
+        <location filename="../../../../../player.cpp" line="410"/>
+        <location filename="../../../../../player.cpp" line="412"/>
         <source>Playing</source>
         <translation>يشتغل</translation>
     </message>
     <message>
-        <location filename="../../../../../player.cpp" line="435"/>
-        <location filename="../../../../../player.cpp" line="437"/>
+        <location filename="../../../../../player.cpp" line="416"/>
+        <location filename="../../../../../player.cpp" line="418"/>
         <source>Paused</source>
         <translation>لبث</translation>
     </message>
@@ -333,22 +600,19 @@ Please check the media service plugins are installed.</source>
 <context>
     <name>PlayerControls</name>
     <message>
-        <location filename="../../../../../playercontrols.cpp" line="50"/>
         <source>Play/Pause 
 </source>
-        <translation>شغل/البث</translation>
+        <translation type="vanished">شغل/البث</translation>
     </message>
     <message>
-        <location filename="../../../../../playercontrols.cpp" line="60"/>
         <source>Next Song 
 </source>
-        <translation>الصوت التالي</translation>
+        <translation type="vanished">الصوت التالي</translation>
     </message>
     <message>
-        <location filename="../../../../../playercontrols.cpp" line="69"/>
         <source>Previous Song 
 </source>
-        <translation>الصوت السابق</translation>
+        <translation type="vanished">الصوت السابق</translation>
     </message>
 </context>
 <context>
@@ -375,16 +639,53 @@ Please check the media service plugins are installed.</source>
     </message>
     <message>
         <location filename="../../../../../propertiesfile.ui" line="62"/>
+        <source>Genre:</source>
+        <translation>النوع:</translation>
+    </message>
+    <message>
+        <location filename="../../../../../propertiesfile.ui" line="119"/>
+        <source>Lenght:</source>
+        <translation>المدة:</translation>
+    </message>
+    <message>
+        <location filename="../../../../../propertiesfile.ui" line="92"/>
+        <source>Bitrate:</source>
+        <translation>البث:</translation>
+    </message>
+    <message>
+        <location filename="../../../../../propertiesfile.ui" line="99"/>
+        <source>Sample rate:</source>
+        <translation>معدل البث:</translation>
+    </message>
+    <message>
+        <location filename="../../../../../propertiesfile.ui" line="76"/>
         <source>Path:</source>
         <translation>المسار :</translation>
+    </message>
+    <message>
+        <location filename="../../../../../propertiesfile.cpp" line="48"/>
+        <location filename="../../../../../propertiesfile.cpp" line="74"/>
+        <source>Bitrate:  </source>
+        <translation>البث:  </translation>
+    </message>
+    <message>
+        <location filename="../../../../../propertiesfile.cpp" line="49"/>
+        <location filename="../../../../../propertiesfile.cpp" line="75"/>
+        <source>Lenght:  </source>
+        <translation>المدة:  </translation>
+    </message>
+    <message>
+        <location filename="../../../../../propertiesfile.cpp" line="50"/>
+        <location filename="../../../../../propertiesfile.cpp" line="76"/>
+        <source>SampleRate:  </source>
+        <translation>معدل البث:  </translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../../../../main.cpp" line="35"/>
         <source>Goldfinch</source>
-        <translation>الحسون</translation>
+        <translation type="vanished">الحسون</translation>
     </message>
 </context>
 <context>
@@ -421,6 +722,15 @@ Please check the media service plugins are installed.</source>
     </message>
 </context>
 <context>
+    <name>TagId</name>
+    <message>
+        <location filename="../../../../../tagid.cpp" line="42"/>
+        <location filename="../../../../../tagid.cpp" line="54"/>
+        <source>Unknown</source>
+        <translation>مجهول</translation>
+    </message>
+</context>
+<context>
     <name>TreeViewAudio</name>
     <message>
         <location filename="../../../../../treeviewaudio.cpp" line="60"/>
@@ -444,56 +754,77 @@ Please check the media service plugins are installed.</source>
     </message>
     <message>
         <location filename="../../../../../treeviewaudio.cpp" line="67"/>
-        <source>Properies</source>
+        <source>Properties</source>
         <translation>خصائص</translation>
+    </message>
+    <message>
+        <source>Properies</source>
+        <translation type="vanished">خصائص</translation>
     </message>
 </context>
 <context>
     <name>WidgetPlayList</name>
     <message>
-        <location filename="../../../../../widgetplaylist.cpp" line="43"/>
         <source>Remove Current </source>
-        <translation>حذف المحدد </translation>
+        <translation type="vanished">حذف المحدد </translation>
     </message>
     <message>
-        <location filename="../../../../../widgetplaylist.cpp" line="49"/>
+        <location filename="../../../../../widgetplaylist.cpp" line="51"/>
         <source>Move Up Current </source>
         <translation>الى الاعلى </translation>
     </message>
     <message>
-        <location filename="../../../../../widgetplaylist.cpp" line="54"/>
+        <location filename="../../../../../widgetplaylist.cpp" line="56"/>
         <source>Move Down Current </source>
         <translation>الى الاسفل </translation>
     </message>
     <message>
-        <location filename="../../../../../widgetplaylist.cpp" line="60"/>
+        <location filename="../../../../../widgetplaylist.cpp" line="136"/>
+        <source>Move Up</source>
+        <translation>الى الاعلى</translation>
+    </message>
+    <message>
+        <location filename="../../../../../widgetplaylist.cpp" line="137"/>
+        <source>Move Down</source>
+        <translation>الى الاسفل</translation>
+    </message>
+    <message>
+        <location filename="../../../../../widgetplaylist.cpp" line="141"/>
+        <source>Edit tags</source>
+        <translation>تحرير الوسم</translation>
+    </message>
+    <message>
+        <location filename="../../../../../widgetplaylist.cpp" line="142"/>
+        <source>Properties</source>
+        <translation>خصائص</translation>
+    </message>
+    <message>
+        <source>Properies</source>
+        <translation type="obsolete">خصائص</translation>
+    </message>
+    <message>
         <source>Clear Plylist</source>
-        <translation>مسح االقائمة</translation>
+        <translation type="vanished">مسح االقائمة</translation>
     </message>
     <message>
-        <location filename="../../../../../widgetplaylist.cpp" line="65"/>
         <source>Current Once</source>
-        <translation>الحالية مرة واحدة</translation>
+        <translation type="vanished">الحالية مرة واحدة</translation>
     </message>
     <message>
-        <location filename="../../../../../widgetplaylist.cpp" line="69"/>
         <source>Current Loop</source>
-        <translation>تكرار الحالية</translation>
+        <translation type="vanished">تكرار الحالية</translation>
     </message>
     <message>
-        <location filename="../../../../../widgetplaylist.cpp" line="73"/>
         <source>Sequential</source>
-        <translation>متتالية</translation>
+        <translation type="vanished">متتالية</translation>
     </message>
     <message>
-        <location filename="../../../../../widgetplaylist.cpp" line="77"/>
         <source>Plylist Loop</source>
-        <translation>تكرار القائمة</translation>
+        <translation type="vanished">تكرار القائمة</translation>
     </message>
     <message>
-        <location filename="../../../../../widgetplaylist.cpp" line="81"/>
         <source>Random</source>
-        <translation>عشوائي</translation>
+        <translation type="vanished">عشوائي</translation>
     </message>
 </context>
 </TS>

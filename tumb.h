@@ -50,8 +50,8 @@
 #define I_M_REPEAT    21
 #define I_M_REPEAT_ONE    22
 #define I_M_PLAY_ONE    23
-#define I_AROW    24
-#define I_AROW_RTL    25
+#define I_AROW_UP    24
+#define I_AROW_DOWN    25
 #define I_FAVO    26
 #define I_MENU    27
 #define I_PROPERTIES    28
@@ -61,6 +61,7 @@
 #define I_QUIT    32
 #define I_Close    33
 #define I_FIND    34
+#define I_STOP    35
 class Tumb
 {
 public:

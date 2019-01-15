@@ -27,7 +27,7 @@
 #include <QToolButton>
 #include <QListView>
 #include <QMenu>
-
+#include <QVBoxLayout>
 class WidgetPlayList : public QWidget
 {
     Q_OBJECT
@@ -35,42 +35,41 @@ public:
     explicit WidgetPlayList(QWidget *parent = nullptr);
 
     QListView *playListView(){return mPlayListView;}
+      void addWidget(QWidget *w){vLayout->addWidget(w);}
 signals:
     void rmovePlaylistItem(QModelIndex);
     void movCurentItem(int,int);
     void cleanList();
     void playbackModeChanged(int);
+    void getPropperty(bool,const QString &);
+
 public slots:
-    void setupIcons();
+  //  void setupIcons();
 private slots:
-    void rmoveItem();
+   void fileProperies();
+    void   editCurent();
     void moveItemUp();
     void moveItemDown();
-    void setPlayMode(QAction *action);
+   // void setPlayMode(QAction *action);
+    void setCustomMenu(const QPoint &pos);
 private:
 
     QToolButton *tbRemoveItem;
+
     QToolButton *tbMoveItemUp;
     QToolButton *tbMoveItemDown;
     QToolButton *tbCleanList;
     QToolButton *tbPlayMode;
 
     QListView *mPlayListView;
+  QVBoxLayout *vLayout ;
 
-//    QIcon cleanIcon;
-//    QIcon removeIcon;
-//    QIcon playModeIcon;
-//    QIcon playoneIcon;
-//    QIcon repeatoneIcon;
-//    QIcon squentialIcon;
-//    QIcon repaeatAlbumIcon;
-//    QIcon shufleAlbumIcon;
-    QActionGroup *actGroup ;
-    QAction *actPlayOne;
-    QAction *actRepeatOne;
-    QAction *actSquent;
-    QAction *actRepeatAlbum;
-    QAction *actRandom;
+//    QActionGroup *actGroup ;
+//    QAction *actPlayOne;
+//    QAction *actRepeatOne;
+//    QAction *actSquent;
+//    QAction *actRepeatAlbum;
+//    QAction *actRandom;
 
 };
 

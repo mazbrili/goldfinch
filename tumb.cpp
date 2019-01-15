@@ -22,7 +22,7 @@
 #include "tumb.h"
 #include <QImageReader>
 #include <QDir>
-//#include <QDebug>
+#include <QDebug>
 #include <QPainter>
 #include <QApplication>
 #include <QBitmap>
@@ -37,9 +37,9 @@ Tumb *Tumb::instance()
 Tumb::Tumb()
 {
     QDir dir;
-    dir.mkpath(D_ALBUM_CACHE);
-    dir.mkpath(D_ARTIST_CACHE);
-
+    dir.mkpath(CACHE_ALBUM);
+    dir.mkpath(CACHE_ARTIST);
+    dir.mkpath(TEMP_CACH);
     mapIcons=new QMap<QString,QString>;
 }
 QIcon  Tumb::iconAlbum(const QString &title, const QString &dirPath)
@@ -87,11 +87,11 @@ QPixmap pix=QPixmap(iconPath).scaled(size,size,Qt::KeepAspectRatio,Qt::SmoothTra
 
 QString Tumb::imageAlbumPath(const QString &title,const QString &dirPath)
 {
-    //qDebug()<<"Art"<<title<<dirPath;
+   qDebug()<<"Art"<<title<<dirPath;
     // Imge from user in cache
     // QString title=index.data().toString()+".jpg";
-    if(QFile::exists(D_ALBUM_CACHE+"/"+title+".jpg"))
-        return D_ALBUM_CACHE+"/"+title+".jpg";
+    if(QFile::exists(CACHE_ALBUM+"/"+title+".jpg"))
+        return CACHE_ALBUM+"/"+title+".jpg";
 
     // Image from defined name
     //QString dirPath=index.data(D_IMGPATH).toString();
@@ -163,8 +163,8 @@ QString Tumb::imageArtiPath(const QString &title)
 {
     // Imge from user in cache
     //QString title=index.data().toString()+".jpg";
-    if(QFile::exists(D_ARTIST_CACHE+"/"+title+".jpg"))
-        return D_ARTIST_CACHE+"/"+title+".jpg";
+    if(QFile::exists(CACHE_ARTIST+"/"+title+".jpg"))
+        return CACHE_ARTIST+"/"+title+".jpg";
     // Image from source
     return ":/icons/artist";
 }
@@ -201,6 +201,7 @@ QIcon Tumb::icon(int name)
     case I_Album:      return iconColorized(":/icons/cover-16",color);
     case I_Genre:      return iconColorized(":/icons/genre-16",color);
     case I_PAUSE:      return iconColorized(":/icons/pause",color);
+   case I_STOP:      return iconColorized(":/icons/stop",color);
     case I_ADD:        return iconColorized(":/icons/add",color);
     case I_ADD_ALBUM:  return iconColorized(":/icons/album-add",color);
     case I_START:      return iconColorized(":/icons/star",color);
@@ -215,8 +216,8 @@ QIcon Tumb::icon(int name)
     case I_M_REPEAT:   return iconColorized(":/icons/media-repeat",color);
     case I_M_REPEAT_ONE:return iconColorized(":/icons/media-repeat-one",color);
     case I_M_PLAY_ONE: return iconColorized(":/icons/media-paly-one",color);
-    case I_AROW:       return iconColorized(":/icons/arow",color);
-    case I_AROW_RTL:   return iconColorized(":/icons/arow-rtl",color);
+    case I_AROW_UP:       return iconColorized(":/icons/pan-up",color);
+    case I_AROW_DOWN:   return iconColorized(":/icons/pan-down",color);
     case I_FAVO:       return iconColorized(":/icons/favo",color);
     case I_MENU:       return iconColorized(":/icons/menu",color);
     case I_PROPERTIES: return iconColorized(":/icons/properties",color);
